@@ -55,6 +55,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
   <div class="top-actions">
     <a class="ghost" href="gallery.html" title="View Asset Gallery">🖼 Gallery</a>
     <a class="ghost" id="uploaderLink" href="img-to-link/index.html" target="_blank" title="Open Img to Link Uploader">☁️ Img to Link</a>
+    <button class="ghost" id="resetImgsBtn" title="Reload all sweet photos">🔄 Reset Photos</button>
     <button class="ghost" id="hiddenBtn">Hidden</button>
     <button class="ghost" id="salesBtn">Today</button>
     <button class="primary" id="addProductBtn">＋ Add item</button>
@@ -215,13 +216,24 @@ const defaults=[
  ['Rice Kheer',320,'kg','Milk & Khoya','kheer,payasam,sweet',34]
 ].map((x,i)=>({id:i+1,name:x[0],price:x[1],unit:x[2],category:x[3],emoji:'🍬',image:getSweetImg(x[0],''),hidden:false}));
 
-let products=JSON.parse(ls.get('mithai_products')||'null')||defaults;
-const defaultsByName=new Map(defaults.map(p=>[p.name,p]));
-products=products.map(p=>{
- const d=defaultsByName.get(p.name);
- const img=getSweetImg(p.name, p.image || (d && d.image));
- return {...(d||{}),...p,category:p.category||(d&&d.category)||'Traditional',hidden:!!p.hidden,image:img};
-});
+let stored=ls.get('mithai_products');
+let products=stored?JSON.parse(stored):null;
+const defaultsByName=new Map(defaults.map(p=>[(p.name||'').toLowerCase().trim(),p]));
+
+if(!products||!products.length){
+ products=defaults;
+} else {
+ products=products.map(p=>{
+  const key=(p.name||'').toLowerCase().trim();
+  const d=defaultsByName.get(key);
+  let img=p.image;
+  if(!img || img==='' || img.startsWith('data:image/svg')){
+   img=d?d.image:getSweetImg(p.name,'');
+  }
+  return {...(d||{}),...p,category:p.category||(d&&d.category)||'Traditional',hidden:!!p.hidden,image:img||(d&&d.image)||getSweetImg(p.name,'')};
+ });
+}
+save();
 
 let activeCategory='All sweets',showHidden=false;
 let cart=[],selected=null, sales=JSON.parse(ls.get('mithai_sales')||'[]').map(x=>({...x,date:x.date||today()}));
@@ -324,6 +336,8 @@ $('addProductBtn').onclick=()=>{
 };
 
 $('hiddenBtn').onclick=()=>{showHidden=!showHidden;activeCategory='All sweets';$('search').value='';render()};
+const resetBtn=$('resetImgsBtn');
+if(resetBtn)resetBtn.onclick=()=>{products=defaults;save();render();toast('All sweet photos restored')};
 $('hideProduct').onclick=()=>{if(!selected)return;selected.hidden=!selected.hidden;save();close('productOverlay');render();toast(selected.hidden?'Hidden from billing menu':'Restored to billing menu')};
 
 $('addForm').onsubmit=async e=>{
