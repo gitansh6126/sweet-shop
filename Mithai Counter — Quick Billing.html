@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light"><title>Mithai Counter — Quick Billing</title>
+<style>
+:root{--bg:#f7f5f0;--ink:#24231f;--muted:#77736b;--line:#e9e4da;--green:#246b4b;--green2:#e8f2eb;--orange:#e58a35;--card:#fff;--shadow:0 12px 35px #25201512}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit;color:var(--ink);-webkit-text-fill-color:var(--ink)}button{cursor:pointer;border:0;background:#f2f0eb}input,select{background:#fff;color-scheme:light}input::placeholder{color:#9a958b;-webkit-text-fill-color:#9a958b}.primary,.checkout,.sheet-actions .add,.cat-chip.active{color:#fff!important;-webkit-text-fill-color:#fff!important}.ghost,.soft,.close,.qtyrow button,.cat-chip,.remove,.del-sale,.hide-action,.sheet-actions .sold{-webkit-text-fill-color:currentColor}.ghost,.close,.qtyrow button{color:var(--ink)}.ghost{background:#fff}.primary{background:var(--green)}.checkout{background:var(--green)}.sheet-actions .add{background:var(--green)}.cat-chip{background:#fff}.cat-chip.active{background:var(--green)}.sheet-actions .sold{background:#f2e7d8;color:#754315}.hide-action{background:#f5eeee;color:#9a4545}.close{background:#f1efe9}.remove,.del-sale{color:#a44}
+.app{max-width:980px;margin:auto;min-height:100dvh;padding:18px 16px 110px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;border-radius:14px;background:#f2dfc7;display:grid;place-items:center;font-size:23px}
+h1{font-size:19px;margin:0}.sub{font-size:12px;color:var(--muted)}
+.top-actions{display:flex;gap:8px}.ghost,.primary,.soft{border-radius:12px;padding:11px 14px;font-weight:650}.ghost{background:#fff;border:1px solid var(--line)}.primary{background:var(--green);color:white}.soft{background:var(--green2);color:var(--green)}
+.search{display:flex;gap:9px;margin:14px 0 16px}.search input{width:100%;padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:#fff;outline:none}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:12px 0}.section-head h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat( auto-fill,minmax(145px,1fr));gap:12px}
+.product{background:var(--card);border:1px solid var(--line);border-radius:17px;overflow:hidden;text-align:left;padding:0;box-shadow:0 2px 7px #00000005;transition:transform .12s}
+.product:active{transform:scale(.97)}.photo{height:116px;background:#f0ece4;display:grid;place-items:center;overflow:hidden;font-size:43px}.photo img{width:100%;height:100%;object-fit:cover}
+.pinfo{padding:10px 11px 12px}.pname{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.price{font-size:13px;color:var(--green);font-weight:700;margin-top:3px}
+.empty{padding:38px 15px;text-align:center;color:var(--muted);background:#fff;border:1px dashed #d9d2c6;border-radius:16px}
+.cartbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:12px max(16px,calc((100vw - 948px)/2));display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:5}
+.total-label{font-size:12px;color:var(--muted)}.total{font-size:21px;font-weight:800}.cart-btn{display:flex;align-items:center;gap:9px}
+.overlay{position:fixed;inset:0;background:#17140f66;z-index:10;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.show{opacity:1;pointer-events:auto}.sheet{width:100%;max-width:600px;background:#fff;border-radius:24px 24px 0 0;padding:12px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(35px);transition:transform .25s cubic-bezier(.2,.8,.2,1);max-height:90dvh;overflow:auto}
+.overlay.show .sheet{transform:translateY(0)}.handle{height:4px;width:42px;border-radius:5px;background:#ddd;margin:0 auto 17px}
+.sheet-head{display:flex;gap:13px;align-items:center;margin-bottom:16px}.sheet-img{width:76px;height:76px;border-radius:15px;background:#f0ece4;display:grid;place-items:center;overflow:hidden;font-size:32px;flex-shrink:0}.sheet-img img{width:100%;height:100%;object-fit:cover}
+.sheet-head h2{margin:0 0 4px;font-size:19px}.sheet-head p{margin:0;color:var(--muted);font-size:13px}
+.field{margin:13px 0}.field label{display:block;font-size:12px;color:var(--muted);font-weight:650;margin-bottom:6px}.field input,.field select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;outline:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.qtyrow{display:flex;gap:8px}.qtyrow button{width:43px;border-radius:11px;background:#f2f0eb;font-size:21px}.qtyrow input{text-align:center;min-width:0}
+.subtotal{display:flex;justify-content:space-between;align-items:center;background:#f6f4ef;padding:13px 14px;border-radius:13px;margin:16px 0}.subtotal strong{font-size:22px}
+.sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sheet-actions button{padding:14px 10px;border-radius:13px;font-weight:750}
+.sheet-actions .sold{background:#f2e7d8;color:#754315}.sheet-actions .add{background:var(--green);color:#fff}
+.modal-title{display:flex;justify-content:space-between;align-items:center}.close{background:#f1efe9;border-radius:50%;width:34px;height:34px;font-size:19px}
+.cart-list{display:grid;gap:9px;margin:15px 0}.cart-line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:13px}.cart-line small{display:block;color:var(--muted)}.remove{background:none;color:#a44;font-size:12px;padding:5px}
+.checkout{width:100%;padding:15px;border-radius:13px;background:var(--green);color:#fff;font-weight:750;margin-top:10px}
+.addform{display:grid;gap:10px}.addform input,.addform select{padding:12px;border:1px solid var(--line);border-radius:11px;width:100%}
+.categories{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}.categories::-webkit-scrollbar{display:none}.cat-chip{white-space:nowrap;padding:9px 13px;border:1px solid var(--line);border-radius:30px;background:#fff;color:#625e56;font-size:13px;font-weight:650}.cat-chip.active{background:var(--green);border-color:var(--green);color:#fff}.hide-action{width:100%;margin-top:10px;padding:11px;border-radius:12px;background:#f5eeee;color:#9a4545;font-weight:650}.photo img{display:block}.top-actions .ghost{padding:10px 11px;font-size:13px}.toast{position:fixed;top:15px;left:50%;transform:translate(-50%,-20px);background:#24231f;color:white;padding:10px 16px;border-radius:30px;opacity:0;transition:.2s;z-index:30;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:700px){.app{padding-top:26px}.photo{height:145px}.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}.sheet{margin-bottom:18px;border-radius:24px}.overlay{align-items:center}}
+header{flex-wrap:wrap}.top-actions{flex-wrap:wrap}.logo{font-size:23px}
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+.sale-card{border:1px solid var(--line);border-radius:13px;padding:12px;display:grid;gap:6px}.sale-top{display:flex;justify-content:space-between;align-items:center}.sale-items{font-size:12px;color:var(--muted);display:grid;gap:2px}.del-sale{background:none;color:#a44;font-size:12px;padding:4px 0 0;text-align:left}
+.qtyrow button{flex-shrink:0}.product{min-width:0}.photo img{background:#f0ece4}
+.qdisp{display:flex;align-items:baseline;justify-content:center;gap:6px;background:#f6f4ef;border-radius:13px;padding:10px;margin-bottom:9px}.qdisp span{font-size:30px;font-weight:800}.qdisp small{font-size:14px;color:var(--muted);font-weight:650}
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}.qgrid button{padding:13px 0;border-radius:12px;font-weight:750;font-size:15px}.qgrid .neg{background:#f7e9e6;color:#a4432f}.qgrid .pos{background:var(--green2);color:var(--green)}.qgrid .neg,.qgrid .pos{-webkit-text-fill-color:currentColor}.qgrid.one{grid-template-columns:1fr 1fr}
+.qbar{display:flex;gap:8px;align-items:stretch;margin-bottom:9px}.qbar button{width:58px;border-radius:13px;font-size:26px;font-weight:700;background:var(--green2);color:var(--green);-webkit-text-fill-color:var(--green)}.qbar #qMinus{background:#f7e9e6;color:#a4432f;-webkit-text-fill-color:#a4432f}.qbar .qdisp{flex:1;margin-bottom:0}.qgrid{grid-template-columns:repeat(3,1fr)!important}
+</style></head>
+<body>
+<div class="app">
+<header><div class="brand"><div class="logo">🍬</div><div><h1>Mithai Counter</h1><div class="sub">Quick billing · Simple sales</div></div></div><div class="top-actions"><button class="ghost" id="hiddenBtn">Hidden</button><button class="ghost" id="salesBtn">Today</button><button class="primary" id="addProductBtn">＋ Add item</button></div></header>
+<div class="search"><input id="search" placeholder="Search sweets… e.g. kaju katli" autocomplete="off"></div>
+<div class="section-head"><h2 id="listTitle">Choose sweets</h2><span class="muted" id="count"></span></div>
+<div class="categories" id="categories"></div>
+<div class="grid" id="products"></div>
+</div>
+<div class="cartbar"><div><div class="total-label"><span id="cartCount">0</span> items in cart</div><div class="total" id="barTotal">₹0</div></div><div class="cart-btn"><button class="ghost" id="clearBtn">Clear</button><button class="primary" id="viewCart">View cart →</button></div></div>
+<div class="overlay" id="productOverlay"><div class="sheet"><div class="handle"></div><div class="sheet-head"><div class="sheet-img" id="sheetImg">🍬</div><div><h2 id="sheetName">Sweet</h2><p id="sheetRate">₹0 / kg</p></div><button class="close" style="margin-left:auto;align-self:flex-start" data-close="productOverlay">×</button></div>
+<div class="field"><label>Quantity</label><div class="qbar"><button type="button" id="qMinus">−</button><div class="qdisp"><span id="qtyShow">0.25</span><small id="unitShow">kg</small></div><button type="button" id="qPlus">+</button></div><div class="qgrid" id="qNeg"></div><div class="qgrid" id="qPos"></div><input id="qty" type="hidden" value="0.25"><input id="unit" type="hidden" value="kg"></div>
+<div class="two"><div class="field"><label>Price per unit (₹)</label><input id="rate" type="number" min="0" step="0.01"></div><div class="field"><label>Or enter amount (₹)</label><input id="amount" type="number" min="0" step="0.01" placeholder="Type amount"></div></div>
+<div class="subtotal"><span>Subtotal</span><strong id="subtotal">₹0</strong></div>
+<div class="sheet-actions"><button class="sold" id="directSold">✓ Direct sold</button><button class="add" id="addCart">＋ Add to cart</button></div><button class="hide-action" id="hideProduct">Hide this sweet</button>
+</div></div>
+<div class="overlay" id="cartOverlay"><div class="sheet"><div class="handle"></div><div class="modal-title"><div><h2 style="margin:0">Current bill</h2><div class="muted">Add more sweets or complete sale</div></div><button class="close" data-close="cartOverlay">×</button></div><div class="cart-list" id="cartList"></div><div class="subtotal"><span>Total payable</span><strong id="cartTotal">₹0</strong></div><button class="checkout" id="completeSale">Complete sale · ₹0</button></div></div>
+<div class="overlay" id="addOverlay"><div class="sheet"><div class="handle"></div><div class="modal-title"><h2 style="margin:0">Add a sweet</h2><button class="close" data-close="addOverlay">×</button></div><form class="addform" id="addForm"><div class="field"><label>Sweet name</label><input id="newName" required placeholder="e.g. Motichoor Ladoo"></div><div class="field"><label>Price (₹)</label><input id="newPrice" type="number" min="0.01" step="0.01" required placeholder="e.g. 500"></div><div class="field"><label>Category</label><select id="newCategory"></select></div><div class="field"><label>Price unit</label><select id="newUnit"><option value="kg">per kg</option><option value="piece">per piece</option></select></div><div class="field"><label>Or upload an image</label><input id="newImage" type="file" accept="image/*"></div><button class="checkout" type="submit">Save sweet</button></form></div></div>
+<div class="overlay" id="salesOverlay"><div class="sheet"><div class="handle"></div><div class="modal-title"><div><h2 style="margin:0">Today's sales</h2><div class="muted">Simple total only · no stock tracking</div></div><button class="close" data-close="salesOverlay">×</button></div><div class="subtotal"><span>Sales total</span><strong id="salesTotal">₹0</strong></div><div id="salesEntries" class="cart-list"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const BG={'Dry Fruit & Kaju':'#f3e6c8','Milk & Khoya':'#f7ecdd','Bengali Sweets':'#fbe9ec','Fried & Syrup':'#fde6cc','Traditional':'#efe8d8'};
+function art(p){
+ const n=p.name.toLowerCase(),has=k=>n.includes(k),bg=BG[p.category||'Traditional']||'#f0ece4';
+ let col='#d9a05b',kind='round';
+ if(has('katli')||has('barfi')||has('sandesh')||has('soan')||has('patisa')||has('cake')||has('kalakand'))kind='diamond';
+ else if(has('roll'))kind='roll';else if(has('jalebi'))kind='spiral';else if(has('rasmalai')||has('ghewar'))kind='disc';
+ if(has('kaju')||has('badam'))col='#ead7a6';else if(has('pista'))col='#9dc27b';else if(has('motichoor'))col='#f0a52c';else if(has('besan'))col='#e6b543';
+ else if(has('kala'))col='#2f1b12';else if(has('gulab'))col='#8a3f1f';else if(has('rasgulla')||has('sandesh')||has('milk'))col='#faf4e8';else if(has('rasmalai'))col='#f6ecd2';
+ else if(has('jalebi')||has('imarti'))col='#ee8a1a';else if(has('peda')||has('kalakand'))col='#c98a4c';else if(has('coconut'))col='#fffdf7';else if(has('cham'))col='#f2aebb';
+ else if(has('ghewar'))col='#e8b45a';else if(has('soan'))col='#f2dfb0';else if(has('balushahi'))col='#d49a56';else if(has('kachori'))col='#c98a4a';
+ const st='stroke="#00000024" stroke-width="1.5"';let g='';
+ if(kind==='diamond')g=[[46,72],[80,50],[114,72]].map(([x,y])=>`<rect x="${x-17}" y="${y-17}" width="34" height="34" rx="4" fill="${col}" ${st} transform="rotate(45 ${x} ${y})"/><circle cx="${x}" cy="${y}" r="2.5" fill="#fff" opacity=".8"/>`).join('');
+ else if(kind==='roll')g=[[80,46,-12],[80,68,-12],[80,90,-12]].map(([x,y,r])=>`<rect x="${x-38}" y="${y-10}" width="76" height="20" rx="10" fill="${col}" ${st} transform="rotate(${r} ${x} ${y})"/><circle cx="${x+28}" cy="${y-6}" r="5" fill="#fff" opacity=".35"/>`).join('');
+ else if(kind==='spiral')g=`<path d="M80 62a8 8 0 1 1-8 8a17 17 0 1 1 25 15a27 27 0 1 1-43-27a36 36 0 0 1 58 8" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round"/>`;
+ else if(kind==='disc')g=`<ellipse cx="80" cy="68" rx="48" ry="32" fill="${col}" ${st}/><ellipse cx="80" cy="64" rx="34" ry="21" fill="#fff" opacity=".35"/>`+[[64,60],[80,56],[96,62],[72,70],[90,72]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3" fill="#6f9a4d"/>`).join('');
+ else g=[[48,74],[112,74],[80,50]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="21" fill="${col}" ${st}/><circle cx="${x-7}" cy="${y-8}" r="5" fill="#fff" opacity=".4"/>`).join('');
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120"><rect width="160" height="120" fill="${bg}"/><ellipse cx="80" cy="100" rx="58" ry="9" fill="#0000001a"/>${g}</svg>`;
+ return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
+const categoryNames=['All sweets','Dry Fruit & Kaju','Milk & Khoya','Bengali Sweets','Fried & Syrup','Traditional'];
+const defaults=[
+ ['Kaju Katli',800,'kg','Dry Fruit & Kaju','kaju,katli,indian,sweet',1],
+ ['Kaju Roll',900,'kg','Dry Fruit & Kaju','kaju,roll,sweet',2],
+ ['Badam Katli',1000,'kg','Dry Fruit & Kaju','almond,indian,sweet',3],
+ ['Pista Roll',1100,'kg','Dry Fruit & Kaju','pista,sweet',4],
+ ['Motichoor Ladoo',400,'kg','Milk & Khoya','motichoor,ladoo,indian,sweet',5],
+ ['Besan Ladoo',380,'kg','Traditional','besan,ladoo,indian,sweet',6],
+ ['Gulab Jamun',360,'kg','Fried & Syrup','gulab,jamun,indian,sweet',7],
+ ['Kala Jamun',400,'kg','Fried & Syrup','kala,jamun,indian,sweet',8],
+ ['Rasgulla',300,'kg','Bengali Sweets','rasgulla,bengali,sweet',9],
+ ['Rasmalai',520,'kg','Bengali Sweets','rasmalai,indian,dessert',10],
+ ['Milk Cake',440,'kg','Milk & Khoya','milk,cake,indian,sweet',11],
+ ['Kalakand',500,'kg','Milk & Khoya','kalakand,indian,sweet',12],
+ ['Peda',480,'kg','Milk & Khoya','peda,indian,sweet',13],
+ ['Mathura Peda',520,'kg','Milk & Khoya','mathura,peda,sweet',14],
+ ['Jalebi',280,'kg','Fried & Syrup','jalebi,indian,sweet',15],
+ ['Imarti',340,'kg','Fried & Syrup','imarti,indian,sweet',16],
+ ['Balushahi',360,'kg','Fried & Syrup','balushahi,indian,sweet',17],
+ ['Ghewar',600,'kg','Traditional','ghewar,rajasthani,sweet',18],
+ ['Soan Papdi',320,'kg','Traditional','soan,papdi,sweet',19],
+ ['Patisa',360,'kg','Traditional','patisa,indian,sweet',20],
+ ['Coconut Barfi',420,'kg','Traditional','coconut,barfi,sweet',21],
+ ['Besan Barfi',420,'kg','Traditional','besan,barfi,sweet',22],
+ ['Cham Cham',440,'kg','Bengali Sweets','cham,cham,bengali,sweet',23],
+ ['Sandesh',500,'kg','Bengali Sweets','sandesh,bengali,sweet',24],
+ ['Mawa Kachori',520,'kg','Fried & Syrup','mawa,kachori,sweet',25]
+].map((x,i)=>({id:i+1,name:x[0],price:x[1],unit:x[2],category:x[3],emoji:'🍬',image:'',hidden:false}));
+let products=JSON.parse(ls.get('mithai_products')||'null')||defaults;
+const defaultsByName=new Map(defaults.map(p=>[p.name,p]));
+products=products.map(p=>{const d=defaultsByName.get(p.name);return {...(d||{}),...p,category:p.category||(d&&d.category)||'Traditional',hidden:!!p.hidden,image:/^https?:/.test(p.image||'')?'':(p.image||'')}});
+let activeCategory='All sweets',showHidden=false;
+let cart=[],selected=null, sales=JSON.parse(ls.get('mithai_sales')||'[]').map(x=>({...x,date:x.date||today()}));
+const $=id=>document.getElementById(id), money=n=>'₹'+(Number(n)||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+function todays(){return sales.filter(x=>x.date===today())}
+function refreshToday(){const b=document.getElementById('salesBtn');if(b)b.textContent='Today '+money(todays().reduce((a,x)=>a+x.total,0))}
+function save(){ls.set('mithai_products',JSON.stringify(products));ls.set('mithai_sales',JSON.stringify(sales));refreshToday()}
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1600)}
+function open(id){$(id).classList.add('show')}function close(id){$(id).classList.remove('show')}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>close(b.dataset.close));
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)close(o.id)}));
+function render(){
+ let q=$('search').value.toLowerCase();
+ let visible=products.filter(p=>showHidden?p.hidden:!p.hidden);
+ let cats=['All sweets',...new Set(products.filter(p=>!p.hidden).map(p=>p.category||'Traditional'))];
+ if(!showHidden){$('categories').innerHTML=cats.map(c=>`<button class="cat-chip ${activeCategory===c?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');}
+ else {$('categories').innerHTML='<span class="muted">Hidden items are excluded from normal billing. Restore one to show it again.</span>';}
+ $('categories').querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{activeCategory=b.dataset.cat;render()});
+ let list=visible.filter(p=>p.name.toLowerCase().includes(q)&& (showHidden||activeCategory==='All sweets'||p.category===activeCategory));
+ $('listTitle').textContent=showHidden?'Hidden sweets':'Choose sweets';
+ $('hiddenBtn').textContent=showHidden?'← Menu':'Hidden ('+products.filter(p=>p.hidden).length+')';
+ $('count').textContent=list.length+' sweets';
+ $('products').innerHTML=list.map(p=>`<button class="product" data-id="${p.id}"><div class="photo"><img loading="lazy" alt="" src="${esc(p.image||art(p))}"></div><div class="pinfo"><div class="pname">${esc(p.name)}</div><div class="price">${money(p.price)} / ${p.unit==='kg'?'kg':'piece'}</div><div class="muted">${esc(p.category||'Traditional')}</div></div></button>`).join('')||'<div class="empty">Nothing here. Try another category or add a sweet.</div>';
+ document.querySelectorAll('.product').forEach(b=>b.onclick=()=>selectProduct(+b.dataset.id));updateCart()
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function selectProduct(id){selected=products.find(p=>p.id===id);$('sheetName').textContent=selected.name;$('sheetRate').textContent=money(selected.price)+' / '+selected.unit;$('sheetImg').innerHTML=`<img alt="" src="${selected.image||art(selected)}">`;$('unit').value=selected.unit;$('rate').value=selected.price;$('qty').value=selected.unit==='kg'?'0.25':'1';$('amount').value='';$('hideProduct').textContent=selected.hidden?'↗ Restore to menu':'Hide this sweet';$('directSold').style.display=selected.hidden?'none':'';$('addCart').style.display=selected.hidden?'none':'';buildQuick();calcFromQty();open('productOverlay')}
+function showQty(){$('qtyShow').textContent=+(+$('qty').value).toFixed(3);$('unitShow').textContent=$('unit').value}
+function calcFromQty(){showQty();$('amount').value='';$('subtotal').textContent=money(Number($('qty').value)*Number($('rate').value))}
+function calcFromAmount(){let a=Number($('amount').value),r=Number($('rate').value);if(r>0){$('qty').value=(a/r).toFixed(3);showQty();$('subtotal').textContent=money(a)}else $('subtotal').textContent=money(0)}
+$('rate').oninput=()=>{$('sheetRate').textContent=money($('rate').value)+' / '+$('unit').value;calcFromQty()};$('amount').oninput=calcFromAmount;
+function adj(d){$('qty').value=+Math.max(0,Number($('qty').value)+d).toFixed(3);calcFromQty()}
+$('qMinus').onclick=()=>adj(-1);$('qPlus').onclick=()=>adj(1);
+function buildQuick(){const k=selected.unit==='kg',st=k?[.25,.5,.75]:[2,5,10],f=n=>String(n).replace(/^0\./,'.');
+$('qNeg').innerHTML=[...st].reverse().map(n=>`<button type="button" class="neg" data-d="${-n}">−${f(n)}</button>`).join('');
+$('qPos').innerHTML=st.map(n=>`<button type="button" class="pos" data-d="${n}">+${f(n)}</button>`).join('');
+document.querySelectorAll('#qNeg button,#qPos button').forEach(b=>b.onclick=()=>adj(+b.dataset.d))}
+function lineFromSheet(){let qty=Number($('qty').value),rate=Number($('rate').value),amount=$('amount').value.trim()===''?qty*rate:Number($('amount').value);return {id:selected.id,name:selected.name,qty,unit:$('unit').value,rate,amount}}
+function addLine(direct){let line=lineFromSheet();if(!line.qty||line.qty<=0||line.amount<=0){toast('Enter a valid quantity or amount');return}if(direct){sales.unshift({date:today(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),total:line.amount,items:[line]});save();close('productOverlay');toast('Sale recorded · '+money(line.amount));render();return}cart.push(line);close('productOverlay');render();toast('Added · choose next sweet')}
+$('addCart').onclick=()=>addLine(false);$('directSold').onclick=()=>addLine(true);
+function updateCart(){let total=cart.reduce((s,x)=>s+x.amount,0);$('barTotal').textContent=money(total);$('cartCount').textContent=cart.length}
+$('viewCart').onclick=()=>{renderCart();open('cartOverlay')};$('clearBtn').onclick=()=>{cart=[];updateCart();toast('Cart cleared')};
+function renderCart(){let total=cart.reduce((s,x)=>s+x.amount,0);$('cartList').innerHTML=cart.map((x,i)=>`<div class="cart-line"><div><b>${esc(x.name)}</b><small>${x.qty} ${x.unit} × ${money(x.rate)} / ${x.unit}</small></div><div style="text-align:right"><b>${money(x.amount)}</b><br><button class="remove" data-remove="${i}">Remove</button></div></div>`).join('')||'<div class="empty">Your cart is empty.</div>';$('cartTotal').textContent=money(total);$('completeSale').textContent='Complete sale · '+money(total);document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.remove,1);renderCart();updateCart()})}
+$('completeSale').onclick=()=>{if(!cart.length){toast('Add an item first');return}let total=cart.reduce((s,x)=>s+x.amount,0);sales.unshift({date:today(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),total,items:[...cart]});save();cart=[];updateCart();close('cartOverlay');toast('Sale complete · '+money(total));render()};
+$('addProductBtn').onclick=()=>{ $('newCategory').innerHTML=categoryNames.filter(c=>c!=='All sweets').map(c=>`<option>${esc(c)}</option>`).join(''); open('addOverlay') };
+$('hiddenBtn').onclick=()=>{showHidden=!showHidden;activeCategory='All sweets';$('search').value='';render()};
+$('hideProduct').onclick=()=>{if(!selected)return;selected.hidden=!selected.hidden;save();close('productOverlay');render();toast(selected.hidden?'Hidden from billing menu':'Restored to billing menu')};
+$('addForm').onsubmit=async e=>{e.preventDefault();let file=$('newImage').files[0],image='';if(file){image=await new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,480/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.78))};im.onerror=()=>res('');im.src=r.result};r.onerror=()=>res('');r.readAsDataURL(file)})}products.unshift({id:Date.now(),name:$('newName').value.trim(),price:Number($('newPrice').value),unit:$('newUnit').value,category:$('newCategory').value,emoji:'🍬',image,hidden:false});save();e.target.reset();close('addOverlay');activeCategory='All sweets';showHidden=false;render();toast('Sweet added')};
+$('search').oninput=render;
+function showSales(){const list=todays(),total=list.reduce((a,x)=>a+x.total,0);$('salesTotal').textContent=money(total);
+$('salesEntries').innerHTML=list.length?list.map(x=>`<div class="sale-card"><div class="sale-top"><b>${money(x.total)}</b><span class="muted">${esc(x.time)} · ${x.items.length} item${x.items.length>1?'s':''}</span></div><div class="sale-items">${x.items.map(i=>`<span>${esc(i.name)} — ${+(+i.qty).toFixed(3)} ${i.unit} · ${money(i.amount)}</span>`).join('')}</div><button class="del-sale" data-del="${sales.indexOf(x)}">Delete entry</button></div>`).join(''):'<div class="empty">No sales recorded yet today.</div>';
+document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{sales.splice(+b.dataset.del,1);save();showSales();toast('Entry deleted')});open('salesOverlay')}
+$('salesBtn').onclick=showSales;
+render();refreshToday();
+</script></body></html>

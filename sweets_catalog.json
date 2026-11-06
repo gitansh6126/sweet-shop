@@ -1,0 +1,225 @@
+{
+  "shop_name": "Royal Mithai Sweet Shop",
+  "total_items": 24,
+  "sweets": [
+    {
+      "id": "gulab_jamun",
+      "name": "Gulab Jamun",
+      "category": "Syrup based",
+      "description": "Soft fried milk-solid balls soaked in rose and cardamom scented sugar syrup.",
+      "query": "Gulab_jamun",
+      "image_file": "assets/gulab_jamun.jpg",
+      "size_kb": 110.9
+    },
+    {
+      "id": "jalebi",
+      "name": "Jalebi",
+      "category": "Fried & Syrup based",
+      "description": "Spiral, crispy fermented batter deep-fried and soaked in saffron sugar syrup.",
+      "query": "Jalebi",
+      "image_file": "assets/jalebi.jpg",
+      "size_kb": 343.1
+    },
+    {
+      "id": "rasgulla",
+      "name": "Rasgulla",
+      "category": "Chhena / Cottage Cheese based",
+      "description": "Spongy, porous chhena dumplings cooked in light sugar syrup.",
+      "query": "Rasgulla",
+      "image_file": "assets/rasgulla.jpg",
+      "size_kb": 178.8
+    },
+    {
+      "id": "kaju_katli",
+      "name": "Kaju Katli",
+      "category": "Nut based",
+      "description": "Diamond-shaped rich fudge made of finely ground cashews, sugar, and edible silver foil.",
+      "query": "Kaju_katli",
+      "image_file": "assets/kaju_katli.jpg",
+      "size_kb": 352.0
+    },
+    {
+      "id": "motichoor_laddu",
+      "name": "Motichoor Laddu",
+      "category": "Gram flour based",
+      "description": "Spherical sweet made of tiny gram-flour pearls fried in ghee and bound in sugar syrup.",
+      "query": "Mothichoor Ladoo",
+      "search_commons": true,
+      "image_file": "assets/motichoor_laddu.jpg",
+      "size_kb": 458.8
+    },
+    {
+      "id": "rasmalai",
+      "name": "Rasmalai",
+      "category": "Milk & Chhena based",
+      "description": "Flattened chhena patties soaked in thick, chilled malai flavored with cardamom and saffron.",
+      "query": "Ras_malai",
+      "image_file": "assets/rasmalai.jpg",
+      "size_kb": 204.8
+    },
+    {
+      "id": "soan_papdi",
+      "name": "Soan Papdi",
+      "category": "Flaked / Crisp",
+      "description": "Crisp, flaky, melt-in-the-mouth sweet made of besan, flour, ghee, and pistachios.",
+      "query": "Soan_papdi",
+      "image_file": "assets/soan_papdi.jpg",
+      "size_kb": 213.2
+    },
+    {
+      "id": "peda",
+      "name": "Doodh Peda",
+      "category": "Khoya based",
+      "description": "Semi-soft sweet roundels prepared with condensed milk solids (khoya) and cardamom.",
+      "query": "Peda",
+      "image_file": "assets/peda.jpg",
+      "size_kb": 91.3
+    },
+    {
+      "id": "mysore_pak",
+      "name": "Mysore Pak",
+      "category": "Ghee & Gram flour based",
+      "description": "Iconic melt-in-the-mouth royal dessert made from generous amounts of pure ghee, besan, and sugar.",
+      "query": "Mysore_pak",
+      "image_file": "assets/mysore_pak.jpg",
+      "size_kb": 128.5
+    },
+    {
+      "id": "gajar_ka_halwa",
+      "name": "Gajar Ka Halwa",
+      "category": "Pudding / Halwa",
+      "description": "Warm carrot pudding slow-cooked with grated carrots, milk, khoya, ghee, and roasted nuts.",
+      "query": "Gajar_ka_halwa",
+      "image_file": "assets/gajar_ka_halwa.jpg",
+      "size_kb": 168.5
+    },
+    {
+      "id": "kalakand",
+      "name": "Kalakand",
+      "category": "Milk Cake / Paneer based",
+      "description": "Moist, grainy sweet cake crafted from reduced solidified milk and paneer.",
+      "query": "Kalakand",
+      "image_file": "assets/kalakand.jpg",
+      "size_kb": 25.2
+    },
+    {
+      "id": "sandesh",
+      "name": "Sandesh",
+      "category": "Chhena based",
+      "description": "Delicate Bengali sweet made with fresh cottage cheese, nolen gur (date palm jaggery) or sugar.",
+      "query": "Sandesh_(confectionery)",
+      "image_file": "assets/sandesh.jpg",
+      "size_kb": 295.1
+    },
+    {
+      "id": "cham_cham",
+      "name": "Cham Cham (Chomchom)",
+      "category": "Chhena based",
+      "description": "Oval-shaped juicy chhena sweet coated with mawa or desiccated coconut flakes.",
+      "query": "Chomchom",
+      "image_file": "assets/cham_cham.jpg",
+      "size_kb": 322.0
+    },
+    {
+      "id": "gujiya",
+      "name": "Gujiya",
+      "category": "Fried pastry",
+      "description": "Crispy golden turnover pastry stuffed with sweetened mawa, dry fruits, and coconut.",
+      "query": "Gujiya",
+      "search_commons": true,
+      "image_file": "assets/gujiya.jpg",
+      "size_kb": 218.8
+    },
+    {
+      "id": "malpua",
+      "name": "Malpua",
+      "category": "Pancake / Syrup based",
+      "description": "Sweet fried pancakes dipped in sugar syrup and topped with thick rabri.",
+      "query": "Malpua",
+      "image_file": "assets/malpua.jpg",
+      "size_kb": 644.4
+    },
+    {
+      "id": "imarti",
+      "name": "Imarti",
+      "category": "Fried & Syrup based",
+      "description": "Intricate flower-shaped circular sweet made from vigna mungo (urad dal) batter fried and dipped in syrup.",
+      "query": "Imarti",
+      "image_file": "assets/imarti.jpg",
+      "size_kb": 204.7
+    },
+    {
+      "id": "barfi",
+      "name": "Kaju Khoya Barfi",
+      "category": "Khoya based",
+      "description": "Classic dense milk-based sweet cut into squares or diamonds and garnished with pistachios.",
+      "query": "Barfi",
+      "image_file": "assets/barfi.jpg",
+      "size_kb": 144.7
+    },
+    {
+      "id": "shrikhand",
+      "name": "Shrikhand",
+      "category": "Yogurt based",
+      "description": "Velvety dessert made with strained hung curd, saffron, cardamom, and nuts.",
+      "query": "Shrikhand",
+      "image_file": "assets/shrikhand.jpg",
+      "size_kb": 1039.0
+    },
+    {
+      "id": "ghevar",
+      "name": "Ghevar",
+      "category": "Traditional Rajasthani",
+      "description": "Disc-shaped honeycomb dessert soaked in sugar syrup and topped with rich malai / rabri.",
+      "query": "Ghevar",
+      "image_file": "assets/ghevar.jpg",
+      "size_kb": 178.7
+    },
+    {
+      "id": "rabri",
+      "name": "Rabri",
+      "category": "Condensed Milk based",
+      "description": "Rich traditional sweet dish made by boiling milk on low heat until it becomes dense and layered.",
+      "query": "Rabri",
+      "image_file": "assets/rabri.jpg",
+      "size_kb": 304.1
+    },
+    {
+      "id": "modak",
+      "name": "Modak",
+      "category": "Steamed / Stuffed",
+      "description": "Sacred dumpling with sweet coconut and jaggery filling wrapped in soft rice flour dough.",
+      "query": "Modak",
+      "image_file": "assets/modak.jpg",
+      "size_kb": 276.0
+    },
+    {
+      "id": "balushahi",
+      "name": "Balushahi",
+      "category": "Flaky Fried",
+      "description": "Flaky, glazed doughnut-like pastry made from maida, clarified butter, and dipped in syrup.",
+      "query": "Balushahi",
+      "search_commons": true,
+      "image_file": "assets/balushahi.jpg",
+      "size_kb": 272.6
+    },
+    {
+      "id": "basundi",
+      "name": "Basundi",
+      "category": "Milk based",
+      "description": "Thick sweetened milk flavored with nutmeg, cardamom, and roasted slivered almonds.",
+      "query": "Basundi",
+      "image_file": "assets/basundi.jpg",
+      "size_kb": 101.2
+    },
+    {
+      "id": "kheer",
+      "name": "Rice Kheer / Payasam",
+      "category": "Pudding",
+      "description": "Traditional creamy pudding cooked with fragrant basmati rice, milk, saffron, and nuts.",
+      "query": "Kheer",
+      "image_file": "assets/kheer.jpg",
+      "size_kb": 136.9
+    }
+  ]
+}
