@@ -60,11 +60,9 @@ h1{font-size:19px;margin:0}.sub{font-size:12px;color:var(--muted)}
 .w-step.minus{background:#fde8e4;color:#a4432f;border-color:#fad2cf}
 .w-step.plus{background:var(--green2);color:var(--green);border-color:#c8e6d4}
 .w-center{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.w-input-wrap{display:flex;align-items:center;justify-content:center;gap:6px;width:100%}
+.w-input-wrap{display:flex;align-items:baseline;justify-content:center;gap:6px;width:100%}
 .w-input{font-size:36px;font-weight:800;width:130px;text-align:center;background:transparent;border:0;outline:none;padding:0;color:var(--ink);-webkit-text-fill-color:var(--ink);font-family:inherit;line-height:1}
-.w-unit-toggle{display:inline-flex;background:#f3efe7;border-radius:20px;padding:2px;gap:2px}
-.w-unit-toggle button{border:0;background:transparent;font-size:12px;font-weight:750;padding:4px 9px;border-radius:16px;color:var(--muted);cursor:pointer;line-height:1;transition:all .15s}
-.w-unit-toggle button.active{background:var(--green);color:#fff;-webkit-text-fill-color:#fff}
+.w-unit-tag{font-size:16px;font-weight:800;color:var(--muted);padding-left:2px}
 .w-smooth-bar{display:inline-flex;align-items:center;justify-content:center;background:#f5f3ec;border-radius:10px;padding:6px 14px;margin-top:10px;font-size:14px;font-weight:800;color:var(--green);letter-spacing:.2px}
 
 /* Quick 4 Weight Buttons Only */
@@ -130,11 +128,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
       <div class="w-center">
         <div class="w-input-wrap">
           <input id="qtyInput" type="number" step="any" min="0" value="0.250" class="w-input" inputmode="decimal">
-          <div class="w-unit-toggle" id="unitToggle">
-            <button type="button" class="active" id="tabKg">kg</button>
-            <button type="button" id="tabG">g</button>
-          </div>
-          <span id="unitShowPiece" style="display:none;font-size:14px;font-weight:750;color:var(--muted)">pcs</span>
+          <span class="w-unit-tag" id="unitShow">kg</span>
         </div>
       </div>
       
@@ -377,22 +371,13 @@ function render() {
   updateCart();
 }
 
-let currentWeightUnit = 'kg'; // 'kg' or 'g' for weighing mode
 
-function getQtyInKg() {
-  const v = Number($('qtyInput').value || 0);
-  if (selected && selected.unit === 'kg' && currentWeightUnit === 'g') {
-    return v / 1000;
-  }
-  return v;
-}
-
-function formatWeightClean(qtyInKg, unit) {
+function formatWeightClean(qty, unit) {
   if (unit !== 'kg') {
-    const q = Math.round(qtyInKg);
+    const q = Math.round(qty);
     return q === 1 ? '1 pc' : `${q} pcs`;
   }
-  const kg = Number(qtyInKg) || 0;
+  const kg = Number(qty) || 0;
   const grams = Math.round(kg * 1000);
   if (grams <= 0) return '0 g';
   if (grams < 1000) return `${grams} g`;
@@ -402,58 +387,24 @@ function formatWeightClean(qtyInKg, unit) {
   return `${wholeKg} kg ${remG} g`;
 }
 
-function updateSmoothWeightDisplay(qtyInKg, unit) {
+function updateSmoothWeightDisplay(qty, unit) {
   const banner = $('wSmoothBar');
   if (!banner) return;
-  banner.textContent = formatWeightClean(qtyInKg, unit);
+  banner.textContent = formatWeightClean(qty, unit);
 }
-
-function updateToggleButtons() {
-  const toggle = $('unitToggle');
-  const pieceSpan = $('unitShowPiece');
-  if (!selected || selected.unit !== 'kg') {
-    if (toggle) toggle.style.display = 'none';
-    if (pieceSpan) pieceSpan.style.display = 'inline-block';
-    return;
-  }
-  if (toggle) toggle.style.display = 'inline-flex';
-  if (pieceSpan) pieceSpan.style.display = 'none';
-  $('tabKg').className = currentWeightUnit === 'kg' ? 'active' : '';
-  $('tabG').className = currentWeightUnit === 'g' ? 'active' : '';
-}
-
-function setWeightInputMode(mode) {
-  if (!selected || selected.unit !== 'kg') return;
-  if (currentWeightUnit === mode) return;
-  
-  const currentVal = Number($('qtyInput').value || 0);
-  if (mode === 'g') {
-    currentWeightUnit = 'g';
-    $('qtyInput').value = Math.round(currentVal * 1000);
-  } else {
-    currentWeightUnit = 'kg';
-    $('qtyInput').value = +( (currentVal / 1000).toFixed(3) );
-  }
-  updateToggleButtons();
-  calcFromQtyInput();
-}
-
-$('tabKg').onclick = () => setWeightInputMode('kg');
-$('tabG').onclick = () => setWeightInputMode('g');
 
 function selectProduct(id) {
   selected = products.find(p => p.id === id);
   if (!selected) return;
-  currentWeightUnit = 'kg';
   $('sheetName').textContent = selected.name;
   $('sheetRate').textContent = money(selected.price) + ' / ' + selected.unit;
   $('sheetImg').innerHTML = `<img alt="" src="${esc(selected.image || art(selected))}">`;
   $('unit').value = selected.unit;
+  $('unitShow').textContent = selected.unit;
   $('rate').value = selected.price;
   $('qtyInput').value = selected.unit === 'kg' ? '0.250' : '1';
   $('amount').value = '';
 
-  updateToggleButtons();
   buildSmartPresets(selected.unit);
   calcFromQtyInput();
   open('productOverlay');
@@ -484,11 +435,11 @@ function buildSmartPresets(unit) {
 }
 
 function calcFromQtyInput() {
-  const qtyInKg = getQtyInKg();
+  const qty = Number($('qtyInput').value || 0);
   const r = Number($('rate').value || 0);
   $('amount').value = '';
-  $('subtotal').textContent = money(qtyInKg * r);
-  updateSmoothWeightDisplay(qtyInKg, selected ? selected.unit : 'kg');
+  $('subtotal').textContent = money(qty * r);
+  updateSmoothWeightDisplay(qty, selected ? selected.unit : 'kg');
 }
 
 // User can directly click/tap on the quantity to type 5, 12, etc.
@@ -500,18 +451,10 @@ $('qtyInput').onclick = () => $('qtyInput').select();
 function calcFromAmount() {
   const a = Number($('amount').value || 0), r = Number($('rate').value || 0);
   if (r > 0) {
-    const qKg = a / r;
-    if (selected && selected.unit === 'kg') {
-      if (currentWeightUnit === 'g') {
-        $('qtyInput').value = Math.round(qKg * 1000);
-      } else {
-        $('qtyInput').value = +(qKg.toFixed(3));
-      }
-    } else {
-      $('qtyInput').value = Math.round(qKg);
-    }
+    const q = a / r;
+    $('qtyInput').value = selected && selected.unit === 'kg' ? +(q.toFixed(3)) : Math.round(q);
     $('subtotal').textContent = money(a);
-    updateSmoothWeightDisplay(qKg, selected.unit);
+    updateSmoothWeightDisplay(q, selected.unit);
   } else {
     $('subtotal').textContent = money(0);
     updateSmoothWeightDisplay(0, selected ? selected.unit : 'kg');
@@ -525,24 +468,16 @@ $('rate').oninput = () => {
 $('amount').oninput = calcFromAmount;
 
 function adj(d) {
-  const currentKg = getQtyInKg();
-  const nextKg = Math.max(0, currentKg + d);
-  if (selected && selected.unit === 'kg') {
-    if (currentWeightUnit === 'g') {
-      $('qtyInput').value = Math.round(nextKg * 1000);
-    } else {
-      $('qtyInput').value = +(nextKg.toFixed(3));
-    }
-  } else {
-    $('qtyInput').value = Math.round(nextKg);
-  }
+  const current = Number($('qtyInput').value || 0);
+  const next = Math.max(0, current + d);
+  $('qtyInput').value = selected && selected.unit === 'kg' ? +(next.toFixed(3)) : Math.round(next);
   calcFromQtyInput();
 }
 $('qMinus').onclick = () => adj(selected && selected.unit === 'kg' ? -0.25 : -1);
 $('qPlus').onclick = () => adj(selected && selected.unit === 'kg' ? 0.25 : 1);
 
 function lineFromSheet() {
-  const qty = getQtyInKg(), rate = Number($('rate').value || 0);
+  const qty = Number($('qtyInput').value || 0), rate = Number($('rate').value || 0);
   const amount = $('amount').value.trim() === '' ? qty * rate : Number($('amount').value);
   return { id: selected.id, name: selected.name, qty, unit: selected.unit, rate, amount };
 }
