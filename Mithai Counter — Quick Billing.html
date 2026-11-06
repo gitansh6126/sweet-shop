@@ -72,6 +72,9 @@ h1{font-size:19px;margin:0}.sub{font-size:12px;color:var(--muted)}
 .qgrid.four-only .pos{background:var(--green2);color:var(--green);border-color:#c8e6d4;-webkit-text-fill-color:var(--green)}
 .qgrid.four-only .neg{background:#fde8e4;color:#a4432f;border-color:#fad2cf;-webkit-text-fill-color:#a4432f}
 .qgrid button{padding:11px 0;border-radius:11px;font-weight:750;font-size:14px}.qgrid .neg{background:#f7e9e6;color:#a4432f}.qgrid .pos{background:var(--green2);color:var(--green)}.qgrid .neg,.qgrid .pos{-webkit-text-fill-color:currentColor}.qgrid.one{grid-template-columns:1fr 1fr}
+.cash-presets{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}
+.cash-pill{background:#fef9ed;border:1.5px solid #fde68a;color:#92400e;font-size:13px;font-weight:800;padding:8px 4px;border-radius:10px;cursor:pointer;transition:all .1s ease;display:flex;align-items:center;justify-content:center}
+.cash-pill:active{transform:scale(.95);background:#fde68a}
 a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 
 /* Uploader Drop Box */
@@ -147,7 +150,14 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 </div>
 <div class="two">
   <div class="field"><label>Price rate (₹)</label><input id="rate" type="number" min="0" step="0.01"></div>
-  <div class="field"><label>Or enter cash amount (₹)</label><input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 100"></div>
+  <div class="field">
+    <label>Or enter cash amount (₹)</label>
+    <input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 100" autocomplete="off">
+    <div class="cash-presets">
+      <button type="button" class="cash-pill" data-cash="200">₹200</button>
+      <button type="button" class="cash-pill" data-cash="500">₹500</button>
+    </div>
+  </div>
 </div>
 <div class="subtotal"><span>Subtotal</span><strong id="subtotal">₹0</strong></div>
 <div class="sheet-actions"><button class="sold" id="directSold">✓ Direct sold</button><button class="add" id="addCart">＋ Add to cart</button></div>
@@ -475,10 +485,19 @@ $('rate').oninput = () => {
 };
 $('amount').oninput = calcFromAmount;
 
+// Quick cash amount presets (₹200 and ₹500)
+document.querySelectorAll('[data-cash]').forEach(b => {
+  b.onclick = () => {
+    $('amount').value = b.dataset.cash;
+    calcFromAmount();
+  };
+});
+
 function adj(d) {
   const current = Number($('qtyInput').value || 0);
   const next = Math.max(0, current + d);
   $('qtyInput').value = selected && selected.unit === 'kg' ? +(next.toFixed(3)) : Math.round(next);
+  $('amount').value = '';
   calcFromQtyInput();
 }
 $('qMinus').onclick = () => adj(selected && selected.unit === 'kg' ? -0.25 : -1);
