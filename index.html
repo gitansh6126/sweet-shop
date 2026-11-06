@@ -65,11 +65,7 @@ h1{font-size:19px;margin:0}.sub{font-size:12px;color:var(--muted)}
 .w-unit-toggle{display:inline-flex;background:#f3efe7;border-radius:20px;padding:2px;gap:2px}
 .w-unit-toggle button{border:0;background:transparent;font-size:12px;font-weight:750;padding:4px 9px;border-radius:16px;color:var(--muted);cursor:pointer;line-height:1;transition:all .15s}
 .w-unit-toggle button.active{background:var(--green);color:#fff;-webkit-text-fill-color:#fff}
-.w-smooth-bar{display:flex;align-items:center;justify-content:center;gap:7px;background:#f8f6f0;border-radius:10px;padding:6px 10px;margin-top:10px;font-size:12px;color:var(--muted);flex-wrap:wrap}
-.w-g-badge{background:var(--green2);color:var(--green);font-weight:800;padding:2px 8px;border-radius:6px;font-size:13px}
-.w-kg-badge{background:#ede8dd;color:var(--ink);font-weight:800;padding:2px 8px;border-radius:6px;font-size:13px}
-.w-badge-dot{color:#bbb}
-.w-eq-text{font-weight:650;color:#6b675d}
+.w-smooth-bar{display:inline-flex;align-items:center;justify-content:center;background:#f5f3ec;border-radius:10px;padding:6px 14px;margin-top:10px;font-size:14px;font-weight:800;color:var(--green);letter-spacing:.2px}
 
 /* Quick 4 Weight Buttons Only */
 .qgrid.four-only{display:grid;grid-template-columns:repeat(4,1fr)!important;gap:8px;margin-top:10px}
@@ -145,13 +141,9 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
       <button type="button" class="w-step plus" id="qPlus" title="Increase">+</button>
     </div>
 
-    <!-- Live Smooth Weight Converter Banner (Shows both kg and g seamlessly) -->
-    <div class="w-smooth-bar" id="wSmoothBar">
-      <span class="w-g-badge" id="wGramsBadge">250 g</span>
-      <span class="w-badge-dot">•</span>
-      <span class="w-kg-badge" id="wKgBadge">0.25 kg</span>
-      <span class="w-badge-dot">•</span>
-      <span class="w-eq-text" id="wEqText">250 grams (¼ kg)</span>
+    <!-- Live Weight Readout (e.g. 250 g, 1 kg, 2 kg 250 g) -->
+    <div style="text-align:center">
+      <div class="w-smooth-bar" id="wSmoothBar">250 g</div>
     </div>
   </div>
 
@@ -395,58 +387,25 @@ function getQtyInKg() {
   return v;
 }
 
+function formatWeightClean(qtyInKg, unit) {
+  if (unit !== 'kg') {
+    const q = Math.round(qtyInKg);
+    return q === 1 ? '1 pc' : `${q} pcs`;
+  }
+  const kg = Number(qtyInKg) || 0;
+  const grams = Math.round(kg * 1000);
+  if (grams <= 0) return '0 g';
+  if (grams < 1000) return `${grams} g`;
+  const wholeKg = Math.floor(grams / 1000);
+  const remG = grams % 1000;
+  if (remG === 0) return `${wholeKg} kg`;
+  return `${wholeKg} kg ${remG} g`;
+}
+
 function updateSmoothWeightDisplay(qtyInKg, unit) {
   const banner = $('wSmoothBar');
   if (!banner) return;
-  
-  if (unit !== 'kg') {
-    const q = Math.round(qtyInKg);
-    let phrase = q === 1 ? '1 piece' : `${q} pieces`;
-    if (q === 6) phrase += ' (½ dozen)';
-    else if (q === 12) phrase += ' (1 dozen)';
-    else if (q === 24) phrase += ' (2 dozen)';
-    banner.innerHTML = `<span class="w-g-badge">${q} pcs</span><span class="w-badge-dot">•</span><span class="w-eq-text">${phrase}</span>`;
-    return;
-  }
-
-  const kg = Number(qtyInKg) || 0;
-  const grams = Math.round(kg * 1000);
-  
-  let phrase = '';
-  if (grams <= 0) {
-    phrase = '0 grams';
-  } else if (grams === 250) {
-    phrase = '250 grams (¼ kg)';
-  } else if (grams === 500) {
-    phrase = '500 grams (½ kg)';
-  } else if (grams === 750) {
-    phrase = '750 grams (¾ kg)';
-  } else if (grams === 1000) {
-    phrase = '1 kilogram';
-  } else if (grams === 1500) {
-    phrase = '1.5 kg (1½ kg)';
-  } else if (grams < 1000) {
-    phrase = `${grams} grams`;
-  } else {
-    const wholeKg = Math.floor(grams / 1000);
-    const remG = grams % 1000;
-    if (remG === 0) {
-      phrase = `${wholeKg} kg`;
-    } else {
-      phrase = `${wholeKg} kg ${remG} g`;
-    }
-  }
-
-  const gBadgeText = grams.toLocaleString('en-IN') + ' g';
-  const kgBadgeText = +(kg.toFixed(3)) + ' kg';
-
-  banner.innerHTML = `
-    <span class="w-g-badge">${gBadgeText}</span>
-    <span class="w-badge-dot">•</span>
-    <span class="w-kg-badge">${kgBadgeText}</span>
-    <span class="w-badge-dot">•</span>
-    <span class="w-eq-text">${phrase}</span>
-  `;
+  banner.textContent = formatWeightClean(qtyInKg, unit);
 }
 
 function updateToggleButtons() {
