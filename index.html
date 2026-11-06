@@ -127,7 +127,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
       
       <div class="w-center">
         <div class="w-input-wrap">
-          <input id="qtyInput" type="number" step="any" min="0" value="0.250" class="w-input" inputmode="decimal">
+          <input id="qtyInput" type="number" step="any" min="0" value="1" class="w-input" inputmode="decimal" autocomplete="off">
           <span class="w-unit-tag" id="unitShow">kg</span>
         </div>
       </div>
@@ -137,7 +137,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 
     <!-- Live Weight Readout (e.g. 250 g, 1 kg, 2 kg 250 g) -->
     <div style="text-align:center">
-      <div class="w-smooth-bar" id="wSmoothBar">250 g</div>
+      <div class="w-smooth-bar" id="wSmoothBar">1 kg</div>
     </div>
   </div>
 
@@ -327,7 +327,13 @@ function save() {
 
 function toast(s) { $('toast').textContent = s; $('toast').classList.add('show'); setTimeout(() => $('toast').classList.remove('show'), 1600); }
 function open(id) { $(id).classList.add('show'); }
-function close(id) { $(id).classList.remove('show'); }
+function close(id) {
+  $(id).classList.remove('show');
+  if (id === 'productOverlay') {
+    $('qtyInput').value = '1';
+    $('amount').value = '';
+  }
+}
 
 document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => close(b.dataset.close));
 document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) close(o.id); }));
@@ -402,7 +408,9 @@ function selectProduct(id) {
   $('unit').value = selected.unit;
   $('unitShow').textContent = selected.unit;
   $('rate').value = selected.price;
-  $('qtyInput').value = selected.unit === 'kg' ? '0.250' : '1';
+  
+  // Strictly reset quantity to 1 on every selection (never pick/retain old values)
+  $('qtyInput').value = '1';
   $('amount').value = '';
 
   buildSmartPresets(selected.unit);
