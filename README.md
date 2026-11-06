@@ -39,11 +39,11 @@ Every sweet in the billing catalog comes pre-attached with high-resolution photo
 ## ⚡ Features
 
 - **Touch-Friendly POS Billing**: Instant item search, per-kg and per-piece rates, rapid fraction weight calculators (`0.25`, `0.5`, `0.75` kg), direct-sale mode, and multi-item cart.
-- **Integrated High-Res Photos**: All sweets show actual photography instead of placeholder shapes.
-- **Image Uploader Integration**:
-  - Connected to `img to link` ([`https://img.rsmachinary.in`](https://img.rsmachinary.in)) for WebP conversion and link hosting.
-  - Dropdown selector preloaded with existing uploaded assets.
-  - Live thumbnail preview for newly added sweets.
+- **Pre-filled High-Res Photography**: All major sweets come pre-filled with real photography out of the box.
+- **Live Menu Editing & Auto Photo Optimization**:
+  - Edit sweet name, price, category, unit, or replace photos directly from the counter.
+  - In-browser WebP image optimizer handles any photo drag-and-drop instantly.
+  - Delete or hide sweets from the menu with zero code edits.
 - **Daily Sales Ledger**: Track today's revenue, order timestamps, and item breakdown without database overhead (saved in browser `localStorage`).
 - **Asset Showcase Gallery**: Visit [`gallery.html`](gallery.html) for a complete visual catalog of all mithai varieties.
 
@@ -53,11 +53,10 @@ Every sweet in the billing catalog comes pre-attached with high-resolution photo
 
 ```
 sweet_shop/
-├── index.html                           # Main POS billing system
+├── index.html                           # Main POS billing & sweet management system
 ├── gallery.html                         # Full-page visual sweets gallery
 ├── Mithai Counter — Quick Billing.html  # Synchronized billing application
 ├── assets/                              # 24 High-resolution sweet images
 ├── sweets_catalog.json                  # Metadata catalog
-├── img_to_link_uploads.json             # Registry of uploaded images
 └── README.md                            # Documentation & photo preview
 ```

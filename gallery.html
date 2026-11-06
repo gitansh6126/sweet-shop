@@ -133,9 +133,6 @@
       <a href="index.html" style="text-decoration: none; background: #246b4b; color: #fff; padding: 0.5rem 1.25rem; border-radius: 9999px; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px;">
         💳 Open Billing Counter
       </a>
-      <a id="galleryUploaderLink" href="img-to-link/index.html" target="_blank" style="text-decoration: none; background: #ffffff; border: 1px solid #d97706; color: #d97706; padding: 0.5rem 1.25rem; border-radius: 9999px; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px;">
-        ☁️ Open Img to Link Uploader
-      </a>
       <span class="badge-count">24 Major Mithai Varieties Ready</span>
     </div>
   </header>
@@ -143,9 +140,6 @@
   <div class="gallery" id="gallery"></div>
 
   <script>
-    const liveUploader = (window.location.protocol === 'file:' || window.location.hostname === 'localhost') ? 'img-to-link/index.html' : 'https://img.rsmachinary.in';
-    const upLink = document.getElementById('galleryUploaderLink');
-    if (upLink) upLink.href = liveUploader;
     fetch('sweets_catalog.json')
       .then(res => res.json())
       .then(data => {

@@ -1,6 +1,3 @@
-# Ignore local junction to other project
-img-to-link/
-
 # OS and Editor files
 .DS_Store
 Thumbs.db

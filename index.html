@@ -413,64 +413,34 @@ $('completeSale').onclick = () => {
 };
 
 /* ========================================================
-   ONLINE IMAGE UPLOADER ENGINE (from img to link)
-   Uploads images online with zero code edits needed
+   STANDALONE SWEET PHOTO PROCESSOR
+   Optimizes & converts sweet photos to WebP directly in-browser
    ======================================================== */
 function uploadImageOnline(file, customName, onProgress) {
   return new Promise((resolve) => {
-    const fd = new FormData();
-    fd.append('image', file);
-    const safeName = (customName || 'sweet').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
-    fd.append('name', safeName);
-
-    const endpoint = 'https://img.rsmachinary.in/upload.php';
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', endpoint, true);
-
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable && onProgress) {
-        const pct = Math.round((e.loaded / e.total) * 100);
-        onProgress(pct, `Uploading ${pct}%...`);
-      }
+    if (onProgress) onProgress(30, 'Optimizing photo...');
+    const r = new FileReader();
+    r.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        if (onProgress) onProgress(75, 'Converting to WebP...');
+        const maxDim = 800;
+        const scale = Math.min(1, maxDim / Math.max(im.width, im.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(im.width * scale);
+        c.height = Math.round(im.height * scale);
+        const ctx = c.getContext('2d');
+        ctx.drawImage(im, 0, 0, c.width, c.height);
+        const webpUrl = c.toDataURL('image/webp', 0.85);
+        if (onProgress) onProgress(100, 'Photo ready!');
+        resolve({ success: true, url: webpUrl });
+      };
+      im.onerror = () => resolve({ success: false, url: '' });
+      im.src = r.result;
     };
-
-    xhr.onload = () => {
-      try {
-        const res = JSON.parse(xhr.responseText);
-        if (res.success && res.url) {
-          resolve({ success: true, url: res.url });
-          return;
-        }
-      } catch (err) {}
-      // Fallback: WebP canvas conversion
-      convertClientWebP(file, resolve);
-    };
-
-    xhr.onerror = () => convertClientWebP(file, resolve);
-    xhr.send(fd);
+    r.onerror = () => resolve({ success: false, url: '' });
+    r.readAsDataURL(file);
   });
-}
-
-function convertClientWebP(file, resolve) {
-  const r = new FileReader();
-  r.onload = () => {
-    const im = new Image();
-    im.onload = () => {
-      const maxDim = 800;
-      const scale = Math.min(1, maxDim / Math.max(im.width, im.height));
-      const c = document.createElement('canvas');
-      c.width = Math.round(im.width * scale);
-      c.height = Math.round(im.height * scale);
-      const ctx = c.getContext('2d');
-      ctx.drawImage(im, 0, 0, c.width, c.height);
-      const webpUrl = c.toDataURL('image/webp', 0.85);
-      resolve({ success: true, url: webpUrl });
-    };
-    im.onerror = () => resolve({ success: false, url: '' });
-    im.src = r.result;
-  };
-  r.onerror = () => resolve({ success: false, url: '' });
-  r.readAsDataURL(file);
 }
 
 /* ========================================================
