@@ -80,10 +80,9 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 <header>
   <div class="brand"><div class="logo">🍬</div><div><h1>Mithai Counter</h1><div class="sub">Fast POS billing · Auto-secure storage</div></div></div>
   <div class="top-actions">
+    <a href="manage.html" class="primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">⚙️ Manage Sweets</a>
     <button class="ghost" id="backupBtn" title="Backup or Restore data">💾 Data Backup</button>
-    <button class="ghost" id="hiddenBtn">Hidden</button>
     <button class="ghost" id="salesBtn">Today ₹0</button>
-    <button class="primary" id="addProductBtn">＋ Add sweet</button>
   </div>
 </header>
 
@@ -96,7 +95,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 <!-- Cart Bar -->
 <div class="cartbar"><div><div class="total-label"><span id="cartCount">0</span> items in cart</div><div class="total" id="barTotal">₹0</div></div><div class="cart-btn"><button class="ghost" id="clearBtn">Clear</button><button class="primary" id="viewCart">View cart →</button></div></div>
 
-<!-- Product Popup Sheet (Quick Calculation Billing + Edit Button) -->
+<!-- Product Popup Sheet (Quick Calculation Billing Only) -->
 <div class="overlay" id="productOverlay"><div class="sheet"><div class="handle"></div>
 <div class="sheet-head">
   <div class="sheet-img" id="sheetImg">🍬</div>
@@ -104,7 +103,6 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
     <h2 id="sheetName" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Sweet</h2>
     <p id="sheetRate">₹0 / kg</p>
   </div>
-  <button class="ghost" id="openEditBtn" style="padding:7px 11px;font-size:12px;border-radius:10px" title="Edit name, price or image">✏️ Edit sweet</button>
   <button class="close" style="align-self:flex-start" data-close="productOverlay">×</button>
 </div>
 <div class="field">
@@ -130,85 +128,6 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 </div>
 <div class="subtotal"><span>Subtotal</span><strong id="subtotal">₹0</strong></div>
 <div class="sheet-actions"><button class="sold" id="directSold">✓ Direct sold</button><button class="add" id="addCart">＋ Add to cart</button></div>
-<div class="sheet-mgmt-actions">
-  <button type="button" class="hide-action" id="hideProduct">Hide this sweet</button>
-  <button type="button" class="ghost" id="openEditBtn2" style="font-weight:650">✏️ Change price / photo</button>
-</div>
-</div></div>
-
-<!-- EDIT SWEET MODAL (Change Name, Price, Image, or Delete) -->
-<div class="overlay" id="editOverlay"><div class="sheet"><div class="handle"></div>
-<div class="modal-title"><h2 style="margin:0">Edit sweet details</h2><button class="close" data-close="editOverlay">×</button></div>
-<form id="editForm" style="display:grid;gap:12px;margin-top:14px">
-  <input type="hidden" id="editSweetId">
-  <div class="field"><label>Sweet Name</label><input id="editSweetName" required></div>
-  <div class="two">
-    <div class="field"><label>Price (₹)</label><input id="editSweetPrice" type="number" min="0.01" step="0.01" required></div>
-    <div class="field"><label>Price Unit</label><select id="editSweetUnit"><option value="kg">per kg</option><option value="piece">per piece</option></select></div>
-  </div>
-  <div class="field"><label>Category</label><select id="editSweetCategory"></select></div>
-
-  <!-- Image Update Section -->
-  <div class="field">
-    <label>Sweet Photo (Click or drop to replace)</label>
-    <div class="drop-box" id="editDropBox">
-      <div class="drop-icon">📷</div>
-      <div class="drop-title">Upload new photo</div>
-      <div class="drop-sub">Auto-optimizes to WebP — saved securely in browser storage</div>
-      <div class="progress-container" id="editUploadProgress"><div class="progress-fill" id="editUploadBar"></div></div>
-      <div id="editUploadStatus" style="font-size:11px;color:var(--green);font-weight:700;margin-top:6px;display:none"></div>
-      <input type="file" id="editFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
-    </div>
-
-    <!-- Current Photo Preview -->
-    <div class="img-preview-card" id="editPreviewCard">
-      <div class="img-preview-thumb"><img id="editPreviewImg" alt="Sweet preview"></div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:700" id="editImgLabel">Current Image</div>
-        <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="editImgUrlText"></div>
-      </div>
-    </div>
-  </div>
-
-  <button class="checkout" type="submit" id="saveEditBtn">Save changes</button>
-  <button type="button" class="btn-danger" id="deleteSweetBtn">🗑 Delete this sweet permanently</button>
-</form>
-</div></div>
-
-<!-- ADD NEW SWEET MODAL -->
-<div class="overlay" id="addOverlay"><div class="sheet"><div class="handle"></div>
-<div class="modal-title"><h2 style="margin:0">Add a new sweet</h2><button class="close" data-close="addOverlay">×</button></div>
-<form class="addform" id="addForm" style="margin-top:14px">
-  <div class="field"><label>Sweet name</label><input id="newName" required placeholder="e.g. Malai Chaap, Special Barfi"></div>
-  <div class="two">
-    <div class="field"><label>Price (₹)</label><input id="newPrice" type="number" min="0.01" step="0.01" required placeholder="e.g. 520"></div>
-    <div class="field"><label>Price unit</label><select id="newUnit"><option value="kg">per kg</option><option value="piece">per piece</option></select></div>
-  </div>
-  <div class="field"><label>Category</label><select id="newCategory"></select></div>
-  
-  <div class="field">
-    <label>Sweet Photo</label>
-    <div class="drop-box" id="addDropBox">
-      <div class="drop-icon">📷</div>
-      <div class="drop-title">Click or Drop Photo here</div>
-      <div class="drop-sub">Auto-optimizes to WebP — saved safely in local storage</div>
-      <div class="progress-container" id="addUploadProgress"><div class="progress-fill" id="addUploadBar"></div></div>
-      <div id="addUploadStatus" style="font-size:11px;color:var(--green);font-weight:700;margin-top:6px;display:none"></div>
-      <input type="file" id="addFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
-    </div>
-
-    <div class="img-preview-card" id="addPreviewCard" style="display:none">
-      <div class="img-preview-thumb"><img id="addPreviewImg" alt="New sweet preview"></div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:700;color:var(--green)">✓ Photo Ready</div>
-        <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="addImgUrlText"></div>
-      </div>
-      <button type="button" id="removeAddImgBtn" style="background:none;color:#a44;font-size:12px;padding:4px 6px">✕</button>
-    </div>
-  </div>
-  
-  <button class="checkout" type="submit" id="saveNewSweetBtn">Save sweet to menu</button>
-</form>
 </div></div>
 
 <!-- DATA BACKUP & RESTORE MODAL -->
@@ -329,40 +248,44 @@ const categoryNames = ['All sweets', 'Dry Fruit & Kaju', 'Milk & Khoya', 'Bengal
    Future code changes/updates will NEVER overwrite shopkeeper prices,
    renamed items, custom sweets, or deleted items!
    ======================================================== */
-const deletedIds = new Set(JSON.parse(ls.get('mithai_deleted_ids') || '[]'));
-let storedProducts = ls.get('mithai_products');
+let deletedIds = new Set(JSON.parse(ls.get('mithai_deleted_ids') || '[]'));
 let products = [];
 
-if (!storedProducts) {
-  products = PREFILLED_SWEETS;
-} else {
-  try {
-    const parsed = JSON.parse(storedProducts);
-    const userMap = new Map(parsed.map(p => [p.id, p]));
-    const defaultMap = new Map(PREFILLED_SWEETS.map(p => [p.id, p]));
-
-    // Start with all existing user saved products (keeps all custom items & custom prices)
-    products = parsed.map(p => {
-      const def = defaultMap.get(p.id);
-      return {
-        ...(def || {}),
-        ...p, // User's customized price, name, photo, and hidden status always win
-        image: p.image || (def && def.image) || ''
-      };
-    });
-
-    // Merge in any newly introduced default sweets (only if shopkeeper did not delete them)
-    PREFILLED_SWEETS.forEach(def => {
-      if (!userMap.has(def.id) && !deletedIds.has(def.id)) {
-        products.push(def);
-      }
-    });
-  } catch (err) {
+function loadData() {
+  deletedIds = new Set(JSON.parse(ls.get('mithai_deleted_ids') || '[]'));
+  const storedProducts = ls.get('mithai_products');
+  if (!storedProducts) {
     products = PREFILLED_SWEETS;
+  } else {
+    try {
+      const parsed = JSON.parse(storedProducts);
+      const userMap = new Map(parsed.map(p => [p.id, p]));
+      const defaultMap = new Map(PREFILLED_SWEETS.map(p => [p.id, p]));
+
+      // Start with all existing user saved products (keeps all custom items & custom prices)
+      products = parsed.map(p => {
+        const def = defaultMap.get(p.id);
+        return {
+          ...(def || {}),
+          ...p, // User's customized price, name, photo, and hidden status always win
+          image: p.image || (def && def.image) || ''
+        };
+      });
+
+      // Merge in any newly introduced default sweets (only if shopkeeper did not delete them)
+      PREFILLED_SWEETS.forEach(def => {
+        if (!userMap.has(def.id) && !deletedIds.has(def.id)) {
+          products.push(def);
+        }
+      });
+    } catch (err) {
+      products = PREFILLED_SWEETS;
+    }
   }
 }
+loadData();
 
-let activeCategory = 'All sweets', showHidden = false;
+let activeCategory = 'All sweets';
 let cart = [], selected = null;
 let sales = JSON.parse(ls.get('mithai_sales') || '[]').map(x => ({ ...x, date: x.date || today() }));
 
@@ -389,24 +312,24 @@ document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
 /* ========================================================
-   4. FAST COUNTER RENDERING & SELECTION
+   4. FAST COUNTER RENDERING & SELECTION (BILLING ONLY)
    ======================================================== */
 function render() {
-  const q = $('search').value.toLowerCase();
-  const visible = products.filter(p => showHidden ? p.hidden : !p.hidden);
-  const cats = ['All sweets', ...new Set(products.filter(p => !p.hidden).map(p => p.category || 'Traditional'))];
+  const q = $('search').value.toLowerCase().trim();
+  const visible = products.filter(p => !p.hidden);
+  const cats = ['All sweets', ...new Set(visible.map(p => p.category || 'Traditional'))];
   
-  if (!showHidden) {
-    $('categories').innerHTML = cats.map(c => `<button class="cat-chip ${activeCategory === c ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
-  } else {
-    $('categories').innerHTML = '<span class="muted">Hidden sweets are excluded from normal billing. Restore one to show it again.</span>';
-  }
+  $('categories').innerHTML = cats.map(c => `<button class="cat-chip ${activeCategory === c ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
   $('categories').querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { activeCategory = b.dataset.cat; render(); });
 
-  const list = visible.filter(p => p.name.toLowerCase().includes(q) && (showHidden || activeCategory === 'All sweets' || p.category === activeCategory));
-  $('listTitle').textContent = showHidden ? 'Hidden sweets' : 'Choose sweets';
-  $('hiddenBtn').textContent = showHidden ? '← Menu' : 'Hidden (' + products.filter(p => p.hidden).length + ')';
-  $('count').textContent = list.length + ' sweets';
+  const list = visible.filter(p => {
+    if (activeCategory !== 'All sweets' && (p.category || 'Traditional') !== activeCategory) return false;
+    if (q && !p.name.toLowerCase().includes(q) && !(p.category || '').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  $('listTitle').textContent = 'Choose sweets';
+  $('count').textContent = list.length + ' sweets available';
 
   $('products').innerHTML = list.map(p => `
     <button class="product" data-id="${p.id}">
@@ -419,7 +342,7 @@ function render() {
         <div class="muted">${esc(p.category || 'Traditional')}</div>
       </div>
     </button>
-  `).join('') || '<div class="empty">No sweets found. Click "+ Add sweet" to create one!</div>';
+  `).join('') || '<div class="empty">No sweets available in this category.<br><br><a href="manage.html" style="color:var(--green);font-weight:700;text-decoration:none">⚙️ Open Manage Sweets to add or unhide items →</a></div>';
 
   document.querySelectorAll('.product').forEach(b => b.onclick = () => selectProduct(+b.dataset.id));
   updateCart();
@@ -436,9 +359,6 @@ function selectProduct(id) {
   $('rate').value = selected.price;
   $('qtyInput').value = selected.unit === 'kg' ? '0.250' : '1';
   $('amount').value = '';
-  $('hideProduct').textContent = selected.hidden ? '↗ Restore to menu' : 'Hide this sweet';
-  $('directSold').style.display = selected.hidden ? 'none' : '';
-  $('addCart').style.display = selected.hidden ? 'none' : '';
 
   buildSmartPresets(selected.unit);
   calcFromQtyInput();
@@ -568,259 +488,7 @@ $('completeSale').onclick = () => {
 };
 
 /* ========================================================
-   5. IN-BROWSER ZERO-DEPENDENCY PHOTO CONVERTER
-   Converts any camera/file photo to compressed WebP in 1 second
-   ======================================================== */
-function optimizePhoto(file, onProgress) {
-  return new Promise((resolve) => {
-    if (onProgress) onProgress(30, 'Optimizing photo...');
-    const r = new FileReader();
-    r.onload = () => {
-      const im = new Image();
-      im.onload = () => {
-        if (onProgress) onProgress(75, 'Compressing to WebP...');
-        const maxDim = 800;
-        const scale = Math.min(1, maxDim / Math.max(im.width, im.height));
-        const c = document.createElement('canvas');
-        c.width = Math.round(im.width * scale);
-        c.height = Math.round(im.height * scale);
-        const ctx = c.getContext('2d');
-        ctx.drawImage(im, 0, 0, c.width, c.height);
-        const webpUrl = c.toDataURL('image/webp', 0.85);
-        if (onProgress) onProgress(100, 'Photo ready!');
-        resolve({ success: true, url: webpUrl });
-      };
-      im.onerror = () => resolve({ success: false, url: '' });
-      im.src = r.result;
-    };
-    r.onerror = () => resolve({ success: false, url: '' });
-    r.readAsDataURL(file);
-  });
-}
-
-/* ========================================================
-   6. EDIT SWEET (Name, Price, Unit, Photo, or Delete)
-   ======================================================== */
-let editTargetImgUrl = '';
-
-function openEditModal(sweet) {
-  close('productOverlay');
-  $('editSweetId').value = sweet.id;
-  $('editSweetName').value = sweet.name;
-  $('editSweetPrice').value = sweet.price;
-  $('editSweetUnit').value = sweet.unit || 'kg';
-
-  $('editSweetCategory').innerHTML = categoryNames.filter(c => c !== 'All sweets').map(c => 
-    `<option value="${esc(c)}" ${sweet.category === c ? 'selected' : ''}>${esc(c)}</option>`
-  ).join('');
-
-  editTargetImgUrl = sweet.image || '';
-  updateEditImgPreview(editTargetImgUrl, sweet.name);
-
-  $('editUploadProgress').style.display = 'none';
-  $('editUploadStatus').style.display = 'none';
-  open('editOverlay');
-}
-
-$('openEditBtn').onclick = () => { if (selected) openEditModal(selected); };
-$('openEditBtn2').onclick = () => { if (selected) openEditModal(selected); };
-
-function updateEditImgPreview(url, label) {
-  if (url) {
-    $('editPreviewImg').src = url;
-    $('editImgLabel').textContent = label || 'Photo Attached';
-    $('editImgUrlText').textContent = url.startsWith('data:') ? 'Custom WebP photo' : url;
-    $('editPreviewCard').style.display = 'flex';
-  } else {
-    $('editPreviewCard').style.display = 'none';
-  }
-}
-
-const editDropBox = $('editDropBox');
-const editFileInput = $('editFileInput');
-editDropBox.onclick = () => editFileInput.click();
-editDropBox.ondragover = e => { e.preventDefault(); editDropBox.classList.add('dragover'); };
-editDropBox.ondragleave = () => editDropBox.classList.remove('dragover');
-editDropBox.ondrop = e => {
-  e.preventDefault();
-  editDropBox.classList.remove('dragover');
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) handleEditFile(e.dataTransfer.files[0]);
-};
-editFileInput.onchange = e => {
-  if (e.target.files && e.target.files[0]) handleEditFile(e.target.files[0]);
-};
-
-async function handleEditFile(file) {
-  const pBox = $('editUploadProgress');
-  const pBar = $('editUploadBar');
-  const pStatus = $('editUploadStatus');
-
-  pBox.style.display = 'block';
-  pStatus.style.display = 'block';
-  pBar.style.width = '30%';
-
-  $('saveEditBtn').disabled = true;
-  $('saveEditBtn').textContent = 'Processing photo...';
-
-  const res = await optimizePhoto(file, (pct, msg) => {
-    pBar.style.width = pct + '%';
-    pStatus.textContent = msg;
-  });
-
-  $('saveEditBtn').disabled = false;
-  $('saveEditBtn').textContent = 'Save changes';
-
-  if (res.success && res.url) {
-    editTargetImgUrl = res.url;
-    pBar.style.width = '100%';
-    pStatus.textContent = '✅ Photo optimized and ready!';
-    updateEditImgPreview(res.url, file.name);
-    toast('Photo updated');
-  } else {
-    toast('Failed to load photo');
-  }
-}
-
-$('editForm').onsubmit = e => {
-  e.preventDefault();
-  const id = Number($('editSweetId').value);
-  const sweet = products.find(p => p.id === id);
-  if (!sweet) return;
-
-  sweet.name = $('editSweetName').value.trim();
-  sweet.price = Number($('editSweetPrice').value);
-  sweet.unit = $('editSweetUnit').value;
-  sweet.category = $('editSweetCategory').value;
-  if (editTargetImgUrl) {
-    sweet.image = editTargetImgUrl;
-  }
-
-  save();
-  close('editOverlay');
-  render();
-  toast('Sweet updated successfully');
-};
-
-$('deleteSweetBtn').onclick = () => {
-  const id = Number($('editSweetId').value);
-  const sweet = products.find(p => p.id === id);
-  if (!sweet) return;
-
-  if (confirm(`Are you sure you want to delete "${sweet.name}" from your menu?`)) {
-    deletedIds.add(id);
-    products = products.filter(p => p.id !== id);
-    save();
-    close('editOverlay');
-    render();
-    toast(`"${sweet.name}" removed from menu`);
-  }
-};
-
-$('hideProduct').onclick = () => {
-  if (!selected) return;
-  selected.hidden = !selected.hidden;
-  save();
-  close('productOverlay');
-  render();
-  toast(selected.hidden ? 'Hidden from billing menu' : 'Restored to billing menu');
-};
-
-/* ========================================================
-   7. ADD NEW SWEET TO MENU
-   ======================================================== */
-let addTargetImgUrl = '';
-
-$('addProductBtn').onclick = () => {
-  $('newCategory').innerHTML = categoryNames.filter(c => c !== 'All sweets').map(c => `<option>${esc(c)}</option>`).join('');
-  $('addForm').reset();
-  addTargetImgUrl = '';
-  $('addPreviewCard').style.display = 'none';
-  $('addUploadProgress').style.display = 'none';
-  $('addUploadStatus').style.display = 'none';
-  open('addOverlay');
-};
-
-const addDropBox = $('addDropBox');
-const addFileInput = $('addFileInput');
-addDropBox.onclick = () => addFileInput.click();
-addDropBox.ondragover = e => { e.preventDefault(); addDropBox.classList.add('dragover'); };
-addDropBox.ondragleave = () => addDropBox.classList.remove('dragover');
-addDropBox.ondrop = e => {
-  e.preventDefault();
-  addDropBox.classList.remove('dragover');
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) handleAddFile(e.dataTransfer.files[0]);
-};
-addFileInput.onchange = e => {
-  if (e.target.files && e.target.files[0]) handleAddFile(e.target.files[0]);
-};
-
-async function handleAddFile(file) {
-  const pBox = $('addUploadProgress');
-  const pBar = $('addUploadBar');
-  const pStatus = $('addUploadStatus');
-
-  pBox.style.display = 'block';
-  pStatus.style.display = 'block';
-  pBar.style.width = '30%';
-
-  $('saveNewSweetBtn').disabled = true;
-  $('saveNewSweetBtn').textContent = 'Processing photo...';
-
-  const res = await optimizePhoto(file, (pct, msg) => {
-    pBar.style.width = pct + '%';
-    pStatus.textContent = msg;
-  });
-
-  $('saveNewSweetBtn').disabled = false;
-  $('saveNewSweetBtn').textContent = 'Save sweet to menu';
-
-  if (res.success && res.url) {
-    addTargetImgUrl = res.url;
-    pBar.style.width = '100%';
-    pStatus.textContent = '✅ Photo ready!';
-    $('addPreviewImg').src = res.url;
-    $('addImgUrlText').textContent = file.name;
-    $('addPreviewCard').style.display = 'flex';
-    toast('Photo attached');
-  } else {
-    toast('Failed to process photo');
-  }
-}
-
-$('removeAddImgBtn').onclick = () => {
-  addTargetImgUrl = '';
-  $('addPreviewCard').style.display = 'none';
-  addFileInput.value = '';
-};
-
-$('addForm').onsubmit = e => {
-  e.preventDefault();
-  const name = $('newName').value.trim();
-  const image = addTargetImgUrl || '';
-
-  products.unshift({
-    id: Date.now(),
-    name: name,
-    price: Number($('newPrice').value),
-    unit: $('newUnit').value,
-    category: $('newCategory').value,
-    emoji: '🍬',
-    image: image,
-    hidden: false
-  });
-
-  save();
-  e.target.reset();
-  addTargetImgUrl = '';
-  close('addOverlay');
-  activeCategory = 'All sweets';
-  showHidden = false;
-  render();
-  toast('New sweet added to menu!');
-};
-
-/* ========================================================
-   8. DATA BACKUP, EXPORT & RESTORE ENGINE
+   5. DATA BACKUP, EXPORT & RESTORE ENGINE
    ======================================================== */
 $('backupBtn').onclick = () => open('backupOverlay');
 
@@ -881,7 +549,6 @@ $('resetToDefaultsBtn').onclick = () => {
   }
 };
 
-$('hiddenBtn').onclick = () => { showHidden = !showHidden; activeCategory = 'All sweets'; $('search').value = ''; render(); };
 $('search').oninput = render;
 
 function showSales() {
@@ -905,6 +572,10 @@ function art(p) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120"><rect width="160" height="120" fill="${bg}"/><ellipse cx="80" cy="100" rx="58" ry="9" fill="#0000001a"/><circle cx="80" cy="55" r="24" fill="#d97706"/><circle cx="73" cy="47" r="5" fill="#fff" opacity=".4"/></svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
+
+// Seamless live sync with separate Management Page
+window.addEventListener('storage', () => { loadData(); render(); refreshToday(); });
+window.addEventListener('focus', () => { loadData(); render(); refreshToday(); });
 
 save();
 render();

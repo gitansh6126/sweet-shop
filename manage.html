@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mithai Counter — Manage Sweets, Prices & Photos</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+<style>
+:root{
+  --bg:#fbf8f2;--card:#ffffff;--ink:#1a1917;--muted:#736f64;--line:#e8e2d5;
+  --green:#1b7340;--green2:#e3f3e9;--accent:#d97706;--accent2:#fef3c7;
+  --danger:#a4432f;--danger2:#fde8e4;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);padding-bottom:60px}
+.app{max-width:960px;margin:0 auto;padding:16px 14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{font-size:26px;width:44px;height:44px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--line)}
+h1{font-size:19px;margin:0;font-weight:800}.sub{font-size:12px;color:var(--muted)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+button, a.btn{font-family:inherit;font-size:13px;font-weight:650;border-radius:10px;padding:9px 13px;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;transition:opacity .15s}
+button:active, a.btn:active{opacity:.8}
+.primary{background:var(--green);color:#fff}
+.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-danger{background:var(--danger2);color:var(--danger);border:1px solid rgba(164,67,47,.2)}
+
+/* Status summary bar */
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.stat-box .num{font-size:22px;font-weight:800;color:var(--ink)}
+.stat-box .lbl{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
+
+/* Search and filters */
+.search{margin-bottom:10px}
+.search input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:14px;outline:none;font-family:inherit}
+.search input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green2)}
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:650;white-space:nowrap;cursor:pointer;color:var(--muted)}
+.pill.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pill.active-tab{background:var(--green);color:#fff;border-color:var(--green)}
+.pill.hidden-tab{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Sweets Management Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;gap:12px;position:relative;transition:all .15s}
+.card.is-hidden{background:#f3efe7;opacity:.78;border-style:dashed}
+.thumb{width:88px;height:88px;border-radius:12px;overflow:hidden;flex-shrink:0;background:#ede8dd;border:1px solid var(--line);position:relative}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.card-body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+.card-name{font-weight:800;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-cat{font-size:11px;color:var(--muted);margin-top:2px}
+.card-price{font-size:17px;font-weight:800;color:var(--green);margin-top:4px}
+.card.is-hidden .card-price{color:var(--muted)}
+
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:750;padding:3px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:.3px}
+.badge-active{background:var(--green2);color:var(--green)}
+.badge-hidden{background:var(--danger2);color:var(--danger)}
+
+.card-actions{display:flex;gap:6px;margin-top:10px}
+.card-actions button{flex:1;font-size:12px;padding:7px 8px;border-radius:9px}
+
+/* Overlays / Modals */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:20;padding:10px}
+.overlay.open{display:flex}
+.sheet{background:var(--card);width:100%;max-width:520px;border-radius:24px 24px 18px 18px;padding:18px 18px 24px;border:1px solid var(--line);max-height:92vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,.2)}
+@media(min-width:600px){.overlay{align-items:center}.sheet{border-radius:24px}}
+.handle{width:40px;height:4px;background:#d8d2c4;border-radius:4px;margin:0 auto 12px}
+.modal-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.close{width:32px;height:32px;border-radius:50%;background:#ede8dd;color:var(--ink);font-size:18px;display:flex;align-items:center;justify-content:center;padding:0;border:0;cursor:pointer}
+
+/* Form Styles */
+.field{margin-bottom:12px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;font-weight:650}
+input,select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:14px;background:#fff;outline:none;font-family:inherit}
+input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green2)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Drop Box */
+.drop-box{border:2px dashed var(--line);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;background:#faf8f5;transition:all .15s ease}
+.drop-box:hover,.drop-box.dragover{border-color:var(--green);background:var(--green2)}
+.drop-icon{font-size:26px;margin-bottom:3px}
+.drop-title{font-weight:700;font-size:13px;color:var(--ink)}
+.drop-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.progress-container{height:4px;background:#e9e4da;border-radius:4px;overflow:hidden;margin-top:8px;display:none}
+.progress-fill{height:100%;background:var(--green);width:0%;transition:width .15s ease}
+.img-preview-card{display:flex;align-items:center;gap:12px;background:#f6f4ef;padding:10px;border-radius:12px;border:1px solid var(--line);margin-top:10px}
+.img-preview-thumb{width:54px;height:54px;border-radius:10px;overflow:hidden;background:#fff;border:1px solid var(--line);flex-shrink:0}
+.img-preview-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+.checkout{width:100%;padding:13px;font-size:15px;font-weight:800;border-radius:13px;background:var(--green);color:#fff;border:0;cursor:pointer;margin-top:8px}
+.backup-card{background:#f6f4ef;border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:8px;margin-bottom:12px}
+
+.toast{position:fixed;top:15px;left:50%;transform:translate(-50%,-20px);background:#24231f;color:white;padding:10px 18px;border-radius:30px;opacity:0;transition:.2s;z-index:30;pointer-events:none;font-weight:600;font-size:13px}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.empty{text-align:center;padding:40px 16px;color:var(--muted);background:var(--card);border-radius:16px;border:1px dashed var(--line);grid-column:1/-1}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">
+    <div class="logo">⚙️</div>
+    <div>
+      <h1>Sweet Menu Management</h1>
+      <div class="sub">Change prices, update photos, hide or add sweets</div>
+    </div>
+  </div>
+  <div class="top-actions">
+    <a href="index.html" class="btn primary">← Back to Billing</a>
+    <button class="ghost" id="backupBtn">💾 Data Backup</button>
+    <button class="btn-accent" id="addProductBtn">＋ Add new sweet</button>
+  </div>
+</header>
+
+<!-- Status Summary -->
+<div class="stats-bar">
+  <div class="stat-box">
+    <div class="num" id="statTotal">34</div>
+    <div class="lbl">Total Sweets</div>
+  </div>
+  <div class="stat-box">
+    <div class="num" id="statActive" style="color:var(--green)">34</div>
+    <div class="lbl">Active on Menu</div>
+  </div>
+  <div class="stat-box">
+    <div class="num" id="statHidden" style="color:var(--accent)">0</div>
+    <div class="lbl">Hidden from Menu</div>
+  </div>
+</div>
+
+<!-- Search Input -->
+<div class="search">
+  <input id="search" placeholder="Search sweets to edit price, photo or hide/restore…" autocomplete="off">
+</div>
+
+<!-- Status Tabs Filter -->
+<div class="filters" id="statusFilters">
+  <button class="pill active-tab" data-status="all">All Sweets</button>
+  <button class="pill" data-status="active">🟢 Active Only</button>
+  <button class="pill" data-status="hidden">⚪ Hidden Only</button>
+</div>
+
+<!-- Category Filters -->
+<div class="filters" id="categoryFilters"></div>
+
+<!-- Sweets Grid -->
+<div class="grid" id="productsGrid"></div>
+</div>
+
+<!-- EDIT SWEET MODAL (Change Name, Price, Unit, Photo, or Delete) -->
+<div class="overlay" id="editOverlay"><div class="sheet"><div class="handle"></div>
+<div class="modal-title">
+  <div>
+    <h2 style="margin:0;font-size:18px">✏️ Change price / photo</h2>
+    <div style="font-size:12px;color:var(--muted)">Saved instantly into browser storage</div>
+  </div>
+  <button class="close" data-close="editOverlay">×</button>
+</div>
+<form id="editForm" style="display:grid;gap:12px;margin-top:10px">
+  <input type="hidden" id="editSweetId">
+  <div class="field"><label>Sweet Name</label><input id="editSweetName" required></div>
+  <div class="two">
+    <div class="field"><label>Price (₹)</label><input id="editSweetPrice" type="number" min="0.01" step="0.01" required></div>
+    <div class="field"><label>Price Unit</label><select id="editSweetUnit"><option value="kg">per kg</option><option value="piece">per piece</option></select></div>
+  </div>
+  <div class="field"><label>Category</label><select id="editSweetCategory"></select></div>
+
+  <!-- Image Update Section -->
+  <div class="field">
+    <label>Sweet Photo (Click or drop to replace)</label>
+    <div class="drop-box" id="editDropBox">
+      <div class="drop-icon">📷</div>
+      <div class="drop-title">Upload new photo</div>
+      <div class="drop-sub">Auto-optimizes to WebP — saved safely in local storage</div>
+      <div class="progress-container" id="editUploadProgress"><div class="progress-fill" id="editUploadBar"></div></div>
+      <div id="editUploadStatus" style="font-size:11px;color:var(--green);font-weight:700;margin-top:6px;display:none"></div>
+      <input type="file" id="editFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
+    </div>
+
+    <!-- Current Photo Preview -->
+    <div class="img-preview-card" id="editPreviewCard">
+      <div class="img-preview-thumb"><img id="editPreviewImg" alt="Sweet preview"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700" id="editImgLabel">Current Image</div>
+        <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="editImgUrlText"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="checkout" type="submit" id="saveEditBtn">Save changes</button>
+  <button type="button" class="btn-danger" id="deleteSweetBtn">🗑 Delete this sweet permanently</button>
+</form>
+</div></div>
+
+<!-- ADD NEW SWEET MODAL -->
+<div class="overlay" id="addOverlay"><div class="sheet"><div class="handle"></div>
+<div class="modal-title">
+  <div>
+    <h2 style="margin:0;font-size:18px">＋ Add new sweet to menu</h2>
+    <div style="font-size:12px;color:var(--muted)">Will appear immediately on billing counter</div>
+  </div>
+  <button class="close" data-close="addOverlay">×</button>
+</div>
+<form id="addForm" style="display:grid;gap:12px;margin-top:10px">
+  <div class="field"><label>Sweet name</label><input id="newName" required placeholder="e.g. Malai Chaap, Special Barfi"></div>
+  <div class="two">
+    <div class="field"><label>Price (₹)</label><input id="newPrice" type="number" min="0.01" step="0.01" required placeholder="e.g. 520"></div>
+    <div class="field"><label>Price unit</label><select id="newUnit"><option value="kg">per kg</option><option value="piece">per piece</option></select></div>
+  </div>
+  <div class="field"><label>Category</label><select id="newCategory"></select></div>
+  
+  <div class="field">
+    <label>Sweet Photo</label>
+    <div class="drop-box" id="addDropBox">
+      <div class="drop-icon">📷</div>
+      <div class="drop-title">Click or Drop Photo here</div>
+      <div class="drop-sub">Auto-optimizes to WebP — saved safely in local storage</div>
+      <div class="progress-container" id="addUploadProgress"><div class="progress-fill" id="addUploadBar"></div></div>
+      <div id="addUploadStatus" style="font-size:11px;color:var(--green);font-weight:700;margin-top:6px;display:none"></div>
+      <input type="file" id="addFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
+    </div>
+
+    <div class="img-preview-card" id="addPreviewCard" style="display:none">
+      <div class="img-preview-thumb"><img id="addPreviewImg" alt="New sweet preview"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700;color:var(--green)">✓ Photo Ready</div>
+        <div style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="addImgUrlText"></div>
+      </div>
+      <button type="button" id="removeAddImgBtn" style="background:none;color:#a44;font-size:12px;padding:4px 6px">✕</button>
+    </div>
+  </div>
+  
+  <button class="checkout" type="submit" id="saveNewSweetBtn">Save sweet to menu</button>
+</form>
+</div></div>
+
+<!-- DATA BACKUP & RESTORE MODAL -->
+<div class="overlay" id="backupOverlay"><div class="sheet"><div class="handle"></div>
+<div class="modal-title">
+  <h2 style="margin:0;font-size:18px">Data Protection & Backups</h2>
+  <button class="close" data-close="backupOverlay">×</button>
+</div>
+<div style="margin-top:10px;font-size:13px;color:var(--muted)">
+  Your sweet prices, custom products, and daily sales are saved securely in your browser's dual storage (LocalStorage & IndexedDB). You can download a backup copy or restore anytime.
+</div>
+
+<div class="backup-card" style="margin-top:14px">
+  <div style="font-weight:700;color:var(--ink)">💾 Download Backup File</div>
+  <div style="font-size:12px;color:var(--muted)">Saves all custom sweets, updated prices, photos, and sales history.</div>
+  <button class="primary" id="downloadBackupBtn" style="margin-top:6px">Download Backup (JSON)</button>
+</div>
+
+<div class="backup-card">
+  <div style="font-weight:700;color:var(--ink)">📂 Restore from Backup File</div>
+  <div style="font-size:12px;color:var(--muted)">Restore your menu and sales records on this device or transfer to another device.</div>
+  <input type="file" id="restoreFileInput" accept=".json" style="display:none">
+  <button class="ghost" id="restoreBackupBtn" style="margin-top:6px">Choose Backup File to Restore</button>
+</div>
+
+<div class="backup-card">
+  <div style="font-weight:700;color:var(--ink)">🔄 Restore Original Prefilled Sweets</div>
+  <div style="font-size:12px;color:var(--muted)">Restores all 34 prefilled sweets and photos back to factory defaults.</div>
+  <button class="ghost" id="resetToDefaultsBtn" style="margin-top:6px;color:#a44">Reset to Original Defaults</button>
+</div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========================================================
+   1. STORAGE ENGINE
+   ======================================================== */
+const ls = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+
+let idb = null;
+const reqDB = indexedDB.open('SweetShopDB', 1);
+reqDB.onupgradeneeded = e => {
+  const db = e.target.result;
+  if (!db.objectStoreNames.contains('app_data')) db.createObjectStore('app_data');
+};
+reqDB.onsuccess = e => {
+  idb = e.target.result;
+  mirrorToIndexedDB();
+};
+
+function mirrorToIndexedDB() {
+  if (!idb) return;
+  try {
+    const tx = idb.transaction('app_data', 'readwrite');
+    const store = tx.objectStore('app_data');
+    store.put(products, 'products');
+    store.put(Array.from(deletedIds), 'deleted_ids');
+  } catch (err) {}
+}
+
+const BG = {'Dry Fruit & Kaju':'#f3e6c8','Milk & Khoya':'#f7ecdd','Bengali Sweets':'#fbe9ec','Fried & Syrup':'#fde6cc','Traditional':'#efe8d8'};
+
+/* 34 PREFILLED SWEETS */
+const PREFILLED_SWEETS = [
+ { id: 1, name: 'Kaju Katli', price: 800, unit: 'kg', category: 'Dry Fruit & Kaju', image: 'assets/kaju_katli.jpg', emoji: '🍬', hidden: false },
+ { id: 2, name: 'Kaju Roll', price: 900, unit: 'kg', category: 'Dry Fruit & Kaju', image: 'assets/kaju_katli.jpg', emoji: '🍬', hidden: false },
+ { id: 3, name: 'Badam Katli', price: 1000, unit: 'kg', category: 'Dry Fruit & Kaju', image: 'assets/kaju_katli.jpg', emoji: '🍬', hidden: false },
+ { id: 4, name: 'Pista Roll', price: 1100, unit: 'kg', category: 'Dry Fruit & Kaju', image: 'assets/barfi.jpg', emoji: '🍬', hidden: false },
+ { id: 5, name: 'Motichoor Ladoo', price: 400, unit: 'kg', category: 'Milk & Khoya', image: 'assets/motichoor_laddu.jpg', emoji: '🍬', hidden: false },
+ { id: 6, name: 'Besan Ladoo', price: 380, unit: 'kg', category: 'Traditional', image: 'assets/motichoor_laddu.jpg', emoji: '🍬', hidden: false },
+ { id: 7, name: 'Gulab Jamun', price: 360, unit: 'kg', category: 'Fried & Syrup', image: 'assets/gulab_jamun.jpg', emoji: '🍬', hidden: false },
+ { id: 8, name: 'Kala Jamun', price: 400, unit: 'kg', category: 'Fried & Syrup', image: 'assets/gulab_jamun.jpg', emoji: '🍬', hidden: false },
+ { id: 9, name: 'Rasgulla', price: 300, unit: 'kg', category: 'Bengali Sweets', image: 'assets/rasgulla.jpg', emoji: '🍬', hidden: false },
+ { id: 10, name: 'Rasmalai', price: 520, unit: 'kg', category: 'Bengali Sweets', image: 'assets/rasmalai.jpg', emoji: '🍬', hidden: false },
+ { id: 11, name: 'Milk Cake', price: 440, unit: 'kg', category: 'Milk & Khoya', image: 'assets/kalakand.jpg', emoji: '🍬', hidden: false },
+ { id: 12, name: 'Kalakand', price: 500, unit: 'kg', category: 'Milk & Khoya', image: 'assets/kalakand.jpg', emoji: '🍬', hidden: false },
+ { id: 13, name: 'Peda', price: 480, unit: 'kg', category: 'Milk & Khoya', image: 'assets/peda.jpg', emoji: '🍬', hidden: false },
+ { id: 14, name: 'Mathura Peda', price: 520, unit: 'kg', category: 'Milk & Khoya', image: 'assets/peda.jpg', emoji: '🍬', hidden: false },
+ { id: 15, name: 'Jalebi', price: 280, unit: 'kg', category: 'Fried & Syrup', image: 'assets/jalebi.jpg', emoji: '🍬', hidden: false },
+ { id: 16, name: 'Imarti', price: 340, unit: 'kg', category: 'Fried & Syrup', image: 'assets/imarti.jpg', emoji: '🍬', hidden: false },
+ { id: 17, name: 'Balushahi', price: 360, unit: 'kg', category: 'Fried & Syrup', image: 'assets/balushahi.jpg', emoji: '🍬', hidden: false },
+ { id: 18, name: 'Ghewar', price: 600, unit: 'kg', category: 'Traditional', image: 'assets/ghevar.jpg', emoji: '🍬', hidden: false },
+ { id: 19, name: 'Soan Papdi', price: 320, unit: 'kg', category: 'Traditional', image: 'assets/soan_papdi.jpg', emoji: '🍬', hidden: false },
+ { id: 20, name: 'Patisa', price: 360, unit: 'kg', category: 'Traditional', image: 'assets/soan_papdi.jpg', emoji: '🍬', hidden: false },
+ { id: 21, name: 'Coconut Barfi', price: 420, unit: 'kg', category: 'Traditional', image: 'assets/barfi.jpg', emoji: '🍬', hidden: false },
+ { id: 22, name: 'Besan Barfi', price: 420, unit: 'kg', category: 'Traditional', image: 'assets/barfi.jpg', emoji: '🍬', hidden: false },
+ { id: 23, name: 'Cham Cham', price: 440, unit: 'kg', category: 'Bengali Sweets', image: 'assets/cham_cham.jpg', emoji: '🍬', hidden: false },
+ { id: 24, name: 'Sandesh', price: 500, unit: 'kg', category: 'Bengali Sweets', image: 'assets/sandesh.jpg', emoji: '🍬', hidden: false },
+ { id: 25, name: 'Mawa Kachori', price: 520, unit: 'kg', category: 'Fried & Syrup', image: 'assets/balushahi.jpg', emoji: '🍬', hidden: false },
+ { id: 26, name: 'Gujiya', price: 480, unit: 'kg', category: 'Traditional', image: 'assets/gujiya.jpg', emoji: '🍬', hidden: false },
+ { id: 27, name: 'Mysore Pak', price: 560, unit: 'kg', category: 'Traditional', image: 'assets/mysore_pak.jpg', emoji: '🍬', hidden: false },
+ { id: 28, name: 'Gajar Ka Halwa', price: 450, unit: 'kg', category: 'Traditional', image: 'assets/gajar_ka_halwa.jpg', emoji: '🍬', hidden: false },
+ { id: 29, name: 'Modak', price: 500, unit: 'kg', category: 'Traditional', image: 'assets/modak.jpg', emoji: '🍬', hidden: false },
+ { id: 30, name: 'Malpua', price: 360, unit: 'kg', category: 'Fried & Syrup', image: 'assets/malpua.jpg', emoji: '🍬', hidden: false },
+ { id: 31, name: 'Rabri', price: 460, unit: 'kg', category: 'Milk & Khoya', image: 'assets/rabri.jpg', emoji: '🍬', hidden: false },
+ { id: 32, name: 'Shrikhand', price: 420, unit: 'kg', category: 'Milk & Khoya', image: 'assets/shrikhand.jpg', emoji: '🍬', hidden: false },
+ { id: 33, name: 'Basundi', price: 440, unit: 'kg', category: 'Milk & Khoya', image: 'assets/basundi.jpg', emoji: '🍬', hidden: false },
+ { id: 34, name: 'Rice Kheer', price: 320, unit: 'kg', category: 'Milk & Khoya', image: 'assets/kheer.jpg', emoji: '🍬', hidden: false }
+];
+
+const categoryNames = ['All categories', 'Dry Fruit & Kaju', 'Milk & Khoya', 'Bengali Sweets', 'Fried & Syrup', 'Traditional'];
+
+let deletedIds = new Set(JSON.parse(ls.get('mithai_deleted_ids') || '[]'));
+let products = [];
+
+function loadData() {
+  deletedIds = new Set(JSON.parse(ls.get('mithai_deleted_ids') || '[]'));
+  const stored = ls.get('mithai_products');
+  if (!stored) {
+    products = PREFILLED_SWEETS;
+  } else {
+    try {
+      const parsed = JSON.parse(stored);
+      const userMap = new Map(parsed.map(p => [p.id, p]));
+      const defaultMap = new Map(PREFILLED_SWEETS.map(p => [p.id, p]));
+
+      products = parsed.map(p => {
+        const def = defaultMap.get(p.id);
+        return { ...(def || {}), ...p, image: p.image || (def && def.image) || '' };
+      });
+
+      PREFILLED_SWEETS.forEach(def => {
+        if (!userMap.has(def.id) && !deletedIds.has(def.id)) products.push(def);
+      });
+    } catch (e) {
+      products = PREFILLED_SWEETS;
+    }
+  }
+}
+
+function save() {
+  ls.set('mithai_products', JSON.stringify(products));
+  ls.set('mithai_deleted_ids', JSON.stringify(Array.from(deletedIds)));
+  mirrorToIndexedDB();
+}
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const money = n => '₹' + (Number(n) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function open(id) { $(id).classList.add('open'); }
+function close(id) { $(id).classList.remove('open'); }
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => close(b.dataset.close));
+document.querySelectorAll('.overlay').forEach(o => o.onclick = e => { if (e.target === o) close(o.id); });
+
+/* Filter states */
+let statusFilter = 'all'; // 'all', 'active', 'hidden'
+let categoryFilter = 'All categories';
+
+function renderStats() {
+  const total = products.length;
+  const hiddenCount = products.filter(p => p.hidden).length;
+  const activeCount = total - hiddenCount;
+  $('statTotal').textContent = total;
+  $('statActive').textContent = activeCount;
+  $('statHidden').textContent = hiddenCount;
+}
+
+function renderCategories() {
+  $('categoryFilters').innerHTML = categoryNames.map(c => `
+    <button class="pill ${c === categoryFilter ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</button>
+  `).join('');
+
+  $('categoryFilters').querySelectorAll('[data-cat]').forEach(b => {
+    b.onclick = () => {
+      categoryFilter = b.dataset.cat;
+      renderCategories();
+      renderProducts();
+    };
+  });
+}
+
+function setupStatusFilters() {
+  $('statusFilters').querySelectorAll('[data-status]').forEach(b => {
+    b.onclick = () => {
+      statusFilter = b.dataset.status;
+      $('statusFilters').querySelectorAll('.pill').forEach(p => p.className = 'pill');
+      if (statusFilter === 'all') b.classList.add('active-tab');
+      else if (statusFilter === 'active') b.classList.add('active-tab');
+      else if (statusFilter === 'hidden') b.classList.add('hidden-tab');
+      renderProducts();
+    };
+  });
+}
+
+function renderProducts() {
+  renderStats();
+  const q = ($('search').value || '').trim().toLowerCase();
+  
+  let list = products.filter(p => {
+    if (statusFilter === 'active' && p.hidden) return false;
+    if (statusFilter === 'hidden' && !p.hidden) return false;
+    if (categoryFilter !== 'All categories' && p.category !== categoryFilter) return false;
+    if (q && !p.name.toLowerCase().includes(q) && !(p.category || '').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const grid = $('productsGrid');
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty">No sweets found matching your filter or search.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(p => {
+    const isHidden = !!p.hidden;
+    const imgUrl = p.image || art(p);
+    return `
+      <div class="card ${isHidden ? 'is-hidden' : ''}">
+        <div class="thumb">
+          <img src="${esc(imgUrl)}" alt="${esc(p.name)}" loading="lazy">
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-header">
+              <div class="card-name" title="${esc(p.name)}">${esc(p.name)}</div>
+              <span class="badge ${isHidden ? 'badge-hidden' : 'badge-active'}">
+                ${isHidden ? '○ Hidden' : '● Active'}
+              </span>
+            </div>
+            <div class="card-cat">${esc(p.category || 'Traditional')}</div>
+            <div class="card-price">${money(p.price)} <small style="font-size:12px;font-weight:600;color:var(--muted)">/ ${p.unit || 'kg'}</small></div>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="primary" data-edit="${p.id}">✏️ Change price / photo</button>
+            <button type="button" class="ghost" data-toggle-hide="${p.id}" style="${isHidden ? 'color:var(--green);font-weight:700' : 'color:var(--muted)'}">
+              ${isHidden ? '↗ Restore' : '👁️ Hide'}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Wire Edit button
+  grid.querySelectorAll('[data-edit]').forEach(b => {
+    b.onclick = () => {
+      const id = Number(b.dataset.edit);
+      const sweet = products.find(p => p.id === id);
+      if (sweet) openEditModal(sweet);
+    };
+  });
+
+  // Wire Hide / Restore button
+  grid.querySelectorAll('[data-toggle-hide]').forEach(b => {
+    b.onclick = () => {
+      const id = Number(b.dataset.toggleHide);
+      const sweet = products.find(p => p.id === id);
+      if (sweet) {
+        sweet.hidden = !sweet.hidden;
+        save();
+        renderProducts();
+        toast(sweet.hidden ? `"${sweet.name}" hidden from billing menu` : `"${sweet.name}" restored to billing menu`);
+      }
+    };
+  });
+}
+
+$('search').oninput = renderProducts;
+
+/* ========================================================
+   2. IN-BROWSER WEBP PHOTO OPTIMIZER
+   ======================================================== */
+function optimizePhoto(file, onProgress) {
+  return new Promise(resolve => {
+    if (onProgress) onProgress(30, 'Optimizing photo...');
+    const r = new FileReader();
+    r.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        if (onProgress) onProgress(75, 'Compressing to WebP...');
+        const maxDim = 800;
+        const scale = Math.min(1, maxDim / Math.max(im.width, im.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(im.width * scale);
+        c.height = Math.round(im.height * scale);
+        const ctx = c.getContext('2d');
+        ctx.drawImage(im, 0, 0, c.width, c.height);
+        const webpUrl = c.toDataURL('image/webp', 0.85);
+        if (onProgress) onProgress(100, 'Photo ready!');
+        resolve({ success: true, url: webpUrl });
+      };
+      im.onerror = () => resolve({ success: false, url: '' });
+      im.src = r.result;
+    };
+    r.onerror = () => resolve({ success: false, url: '' });
+    r.readAsDataURL(file);
+  });
+}
+
+/* ========================================================
+   3. EDIT SWEET MODAL
+   ======================================================== */
+let editTargetImgUrl = '';
+
+function openEditModal(sweet) {
+  $('editSweetId').value = sweet.id;
+  $('editSweetName').value = sweet.name;
+  $('editSweetPrice').value = sweet.price;
+  $('editSweetUnit').value = sweet.unit || 'kg';
+
+  $('editSweetCategory').innerHTML = categoryNames.filter(c => c !== 'All categories').map(c => 
+    `<option value="${esc(c)}" ${sweet.category === c ? 'selected' : ''}>${esc(c)}</option>`
+  ).join('');
+
+  editTargetImgUrl = sweet.image || '';
+  updateEditImgPreview(editTargetImgUrl, sweet.name);
+
+  $('editUploadProgress').style.display = 'none';
+  $('editUploadStatus').style.display = 'none';
+  open('editOverlay');
+}
+
+function updateEditImgPreview(url, label) {
+  if (url) {
+    $('editPreviewImg').src = url;
+    $('editImgLabel').textContent = label || 'Photo Attached';
+    $('editImgUrlText').textContent = url.startsWith('data:') ? 'Custom WebP photo' : url;
+    $('editPreviewCard').style.display = 'flex';
+  } else {
+    $('editPreviewCard').style.display = 'none';
+  }
+}
+
+const editDropBox = $('editDropBox');
+const editFileInput = $('editFileInput');
+editDropBox.onclick = () => editFileInput.click();
+editDropBox.ondragover = e => { e.preventDefault(); editDropBox.classList.add('dragover'); };
+editDropBox.ondragleave = () => editDropBox.classList.remove('dragover');
+editDropBox.ondrop = e => {
+  e.preventDefault();
+  editDropBox.classList.remove('dragover');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) handleEditFile(e.dataTransfer.files[0]);
+};
+editFileInput.onchange = e => {
+  if (e.target.files && e.target.files[0]) handleEditFile(e.target.files[0]);
+};
+
+async function handleEditFile(file) {
+  const pBox = $('editUploadProgress');
+  const pBar = $('editUploadBar');
+  const pStatus = $('editUploadStatus');
+
+  pBox.style.display = 'block';
+  pStatus.style.display = 'block';
+  pBar.style.width = '30%';
+
+  $('saveEditBtn').disabled = true;
+  $('saveEditBtn').textContent = 'Processing photo...';
+
+  const res = await optimizePhoto(file, (pct, msg) => {
+    pBar.style.width = pct + '%';
+    pStatus.textContent = msg;
+  });
+
+  $('saveEditBtn').disabled = false;
+  $('saveEditBtn').textContent = 'Save changes';
+
+  if (res.success && res.url) {
+    editTargetImgUrl = res.url;
+    pBar.style.width = '100%';
+    pStatus.textContent = '✅ Photo optimized and ready!';
+    updateEditImgPreview(res.url, file.name);
+    toast('Photo updated');
+  } else {
+    toast('Failed to load photo');
+  }
+}
+
+$('editForm').onsubmit = e => {
+  e.preventDefault();
+  const id = Number($('editSweetId').value);
+  const sweet = products.find(p => p.id === id);
+  if (!sweet) return;
+
+  sweet.name = $('editSweetName').value.trim();
+  sweet.price = Number($('editSweetPrice').value);
+  sweet.unit = $('editSweetUnit').value;
+  sweet.category = $('editSweetCategory').value;
+  if (editTargetImgUrl) {
+    sweet.image = editTargetImgUrl;
+  }
+
+  save();
+  close('editOverlay');
+  renderProducts();
+  toast('Sweet updated successfully');
+};
+
+$('deleteSweetBtn').onclick = () => {
+  const id = Number($('editSweetId').value);
+  const sweet = products.find(p => p.id === id);
+  if (!sweet) return;
+
+  if (confirm(`Are you sure you want to permanently delete "${sweet.name}" from your shop menu?`)) {
+    deletedIds.add(id);
+    products = products.filter(p => p.id !== id);
+    save();
+    close('editOverlay');
+    renderProducts();
+    toast(`"${sweet.name}" removed from menu`);
+  }
+};
+
+/* ========================================================
+   4. ADD NEW SWEET
+   ======================================================== */
+let addTargetImgUrl = '';
+
+$('addProductBtn').onclick = () => {
+  $('newCategory').innerHTML = categoryNames.filter(c => c !== 'All categories').map(c => `<option>${esc(c)}</option>`).join('');
+  $('addForm').reset();
+  addTargetImgUrl = '';
+  $('addPreviewCard').style.display = 'none';
+  $('addUploadProgress').style.display = 'none';
+  $('addUploadStatus').style.display = 'none';
+  open('addOverlay');
+};
+
+const addDropBox = $('addDropBox');
+const addFileInput = $('addFileInput');
+addDropBox.onclick = () => addFileInput.click();
+addDropBox.ondragover = e => { e.preventDefault(); addDropBox.classList.add('dragover'); };
+addDropBox.ondragleave = () => addDropBox.classList.remove('dragover');
+addDropBox.ondrop = e => {
+  e.preventDefault();
+  addDropBox.classList.remove('dragover');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) handleAddFile(e.dataTransfer.files[0]);
+};
+addFileInput.onchange = e => {
+  if (e.target.files && e.target.files[0]) handleAddFile(e.target.files[0]);
+};
+
+async function handleAddFile(file) {
+  const pBox = $('addUploadProgress');
+  const pBar = $('addUploadBar');
+  const pStatus = $('addUploadStatus');
+
+  pBox.style.display = 'block';
+  pStatus.style.display = 'block';
+  pBar.style.width = '30%';
+
+  $('saveNewSweetBtn').disabled = true;
+  $('saveNewSweetBtn').textContent = 'Processing photo...';
+
+  const res = await optimizePhoto(file, (pct, msg) => {
+    pBar.style.width = pct + '%';
+    pStatus.textContent = msg;
+  });
+
+  $('saveNewSweetBtn').disabled = false;
+  $('saveNewSweetBtn').textContent = 'Save sweet to menu';
+
+  if (res.success && res.url) {
+    addTargetImgUrl = res.url;
+    pBar.style.width = '100%';
+    pStatus.textContent = '✅ Photo ready!';
+    $('addPreviewImg').src = res.url;
+    $('addImgUrlText').textContent = file.name;
+    $('addPreviewCard').style.display = 'flex';
+    toast('Photo attached');
+  } else {
+    toast('Failed to process photo');
+  }
+}
+
+$('removeAddImgBtn').onclick = () => {
+  addTargetImgUrl = '';
+  $('addPreviewCard').style.display = 'none';
+  addFileInput.value = '';
+};
+
+$('addForm').onsubmit = e => {
+  e.preventDefault();
+  const name = $('newName').value.trim();
+  const image = addTargetImgUrl || '';
+
+  products.unshift({
+    id: Date.now(),
+    name: name,
+    price: Number($('newPrice').value),
+    unit: $('newUnit').value,
+    category: $('newCategory').value,
+    emoji: '🍬',
+    image: image,
+    hidden: false
+  });
+
+  save();
+  e.target.reset();
+  addTargetImgUrl = '';
+  close('addOverlay');
+  statusFilter = 'all';
+  categoryFilter = 'All categories';
+  renderCategories();
+  renderProducts();
+  toast('New sweet added to menu!');
+};
+
+/* ========================================================
+   5. BACKUP & RESTORE
+   ======================================================== */
+$('backupBtn').onclick = () => open('backupOverlay');
+
+$('downloadBackupBtn').onclick = () => {
+  const backupData = {
+    version: '1.0',
+    export_date: new Date().toISOString(),
+    products: products,
+    sales: JSON.parse(ls.get('mithai_sales') || '[]'),
+    deleted_ids: Array.from(deletedIds)
+  };
+  const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const d = new Date();
+  const ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  a.download = `sweet_shop_backup_${ds}.json`;
+  a.click();
+  toast('Backup file downloaded');
+};
+
+$('restoreBackupBtn').onclick = () => $('restoreFileInput').click();
+
+$('restoreFileInput').onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (Array.isArray(data.products)) {
+        products = data.products;
+        if (Array.isArray(data.sales)) ls.set('mithai_sales', JSON.stringify(data.sales));
+        if (Array.isArray(data.deleted_ids)) {
+          deletedIds.clear();
+          data.deleted_ids.forEach(id => deletedIds.add(id));
+        }
+        save();
+        renderProducts();
+        close('backupOverlay');
+        toast('Data restored successfully!');
+      } else {
+        alert('Invalid backup file format');
+      }
+    } catch (err) {
+      alert('Could not read backup file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+};
+
+$('resetToDefaultsBtn').onclick = () => {
+  if (confirm('Are you sure you want to restore original factory sweets and photos? Any custom additions will be reset.')) {
+    deletedIds.clear();
+    products = PREFILLED_SWEETS;
+    save();
+    renderProducts();
+    close('backupOverlay');
+    toast('Menu reset to factory prefilled sweets');
+  }
+};
+
+function art(p) {
+  const bg = BG[p.category || 'Traditional'] || '#f0ece4';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120"><rect width="160" height="120" fill="${bg}"/><ellipse cx="80" cy="100" rx="58" ry="9" fill="#0000001a"/><circle cx="80" cy="55" r="24" fill="#d97706"/><circle cx="73" cy="47" r="5" fill="#fff" opacity=".4"/></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+// Listen to storage events so changes in another tab update this view
+window.addEventListener('storage', () => { loadData(); renderProducts(); });
+window.addEventListener('focus', () => { loadData(); renderProducts(); });
+
+// Init
+loadData();
+renderCategories();
+setupStatusFilters();
+renderProducts();
+</script>
+</body>
+</html>

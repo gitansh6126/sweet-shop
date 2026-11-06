@@ -38,13 +38,14 @@ Every sweet in the billing catalog comes pre-attached with high-resolution photo
 
 ## ⚡ Features
 
-- **Touch-Friendly POS Billing**: Instant item search, per-kg and per-piece rates, rapid fraction weight calculators (`0.25`, `0.5`, `0.75` kg), direct-sale mode, and multi-item cart.
-- **Pre-filled High-Res Photography**: All major sweets come pre-filled with real photography out of the box.
-- **Live Menu Editing & Auto Photo Optimization**:
-  - Edit sweet name, price, category, unit, or replace photos directly from the counter.
-  - In-browser WebP image optimizer handles any photo drag-and-drop instantly.
-  - Delete or hide sweets from the menu with zero code edits.
-- **Daily Sales Ledger**: Track today's revenue, order timestamps, and item breakdown without database overhead (saved in browser `localStorage`).
+- **Dedicated POS Counter (`index.html`)**: Lightning-fast sales calculations, single-tap editable quantity box (`5` or `12` kg), 4 quick weight buttons (`+500g`, `−500g`, `+250g`, `−250g`), real-time reverse cash calculation, and multi-item cart.
+- **Separate Menu Management Page (`manage.html`)**:
+  - **1-Tap Hide / Restore**: Hide sweets when out of stock or restore them to the counter with a single tap.
+  - **✏️ Change Price / Photo**: Change sweet name, price, unit, category, or replace photo with real-time in-browser WebP compression.
+  - **＋ Add New Sweets**: Add custom sweets to your counter anytime with your own photos.
+  - **Dual Storage Persistence**: All edits, prices, and hidden flags sync live between both pages via `localStorage` and `IndexedDB`.
+- **Pre-filled High-Res Photography**: All 34 major sweets come pre-filled with real photography out of the box.
+- **Daily Sales Ledger**: Track today's revenue, order timestamps, and item breakdown without server overhead.
 - **Asset Showcase Gallery**: Visit [`gallery.html`](gallery.html) for a complete visual catalog of all mithai varieties.
 
 ---
@@ -53,10 +54,12 @@ Every sweet in the billing catalog comes pre-attached with high-resolution photo
 
 ```
 sweet_shop/
-├── index.html                           # Main POS billing & sweet management system
-├── gallery.html                         # Full-page visual sweets gallery
+├── index.html                           # Fast POS billing counter application
+├── manage.html                          # Dedicated sweet management, prices & photos page
 ├── Mithai Counter — Quick Billing.html  # Synchronized billing application
+├── gallery.html                         # Full-page visual sweets gallery
 ├── assets/                              # 24 High-resolution sweet images
 ├── sweets_catalog.json                  # Metadata catalog
+```
 └── README.md                            # Documentation & photo preview
 ```
