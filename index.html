@@ -500,8 +500,8 @@ function adj(d) {
   $('amount').value = '';
   calcFromQtyInput();
 }
-$('qMinus').onclick = () => adj(selected && selected.unit === 'kg' ? -0.25 : -1);
-$('qPlus').onclick = () => adj(selected && selected.unit === 'kg' ? 0.25 : 1);
+$('qMinus').onclick = () => adj(-1);
+$('qPlus').onclick = () => adj(1);
 
 function lineFromSheet() {
   const qty = Number($('qtyInput').value || 0), rate = Number($('rate').value || 0);
