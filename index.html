@@ -51,8 +51,13 @@ h1{font-size:19px;margin:0}.sub{font-size:12px;color:var(--muted)}
 @media(min-width:700px){.app{padding-top:26px}.photo{height:145px}.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}.sheet{margin-bottom:18px;border-radius:24px}.overlay{align-items:center}}
 .sale-card{border:1px solid var(--line);border-radius:13px;padding:12px;display:grid;gap:6px}.sale-top{display:flex;justify-content:space-between;align-items:center}.sale-items{font-size:12px;color:var(--muted);display:grid;gap:2px}.del-sale{background:none;color:#a44;font-size:12px;padding:4px 0 0;text-align:left}
 .qtyrow button{flex-shrink:0}.product{min-width:0}
-.qdisp{display:flex;align-items:baseline;justify-content:center;gap:6px;background:#f6f4ef;border-radius:13px;padding:10px;margin-bottom:9px}.qdisp span{font-size:30px;font-weight:800}.qdisp small{font-size:14px;color:var(--muted);font-weight:650}
-.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}.qgrid button{padding:11px 0;border-radius:11px;font-weight:750;font-size:14px}.qgrid .neg{background:#f7e9e6;color:#a4432f}.qgrid .pos{background:var(--green2);color:var(--green)}.qgrid .neg,.qgrid .pos{-webkit-text-fill-color:currentColor}.qgrid.one{grid-template-columns:1fr 1fr}
+.qdisp{display:flex;align-items:center;justify-content:center;gap:6px;background:#f6f4ef;border-radius:13px;padding:8px 12px;margin-bottom:9px;border:1.5px solid transparent;transition:all .15s}
+.qdisp:focus-within{background:#fff;border-color:var(--green);box-shadow:0 0 0 3px var(--green2)}
+.qty-field{font-size:32px;font-weight:800;width:130px;text-align:center;background:transparent;border:0;outline:none;padding:0;color:var(--ink);-webkit-text-fill-color:var(--ink);font-family:inherit}
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.qgrid.four-only{display:grid;grid-template-columns:repeat(4,1fr)!important;gap:8px;margin-top:8px}
+.qgrid.four-only button{padding:14px 4px;font-size:15px;font-weight:800;border-radius:12px}
+.qgrid button{padding:11px 0;border-radius:11px;font-weight:750;font-size:14px}.qgrid .neg{background:#f7e9e6;color:#a4432f}.qgrid .pos{background:var(--green2);color:var(--green)}.qgrid .neg,.qgrid .pos{-webkit-text-fill-color:currentColor}.qgrid.one{grid-template-columns:1fr 1fr}
 .qbar{display:flex;gap:8px;align-items:stretch;margin-bottom:9px}.qbar button{width:54px;border-radius:13px;font-size:24px;font-weight:700;background:var(--green2);color:var(--green);-webkit-text-fill-color:var(--green)}.qbar #qMinus{background:#f7e9e6;color:#a4432f;-webkit-text-fill-color:#a4432f}.qbar .qdisp{flex:1;margin-bottom:0}
 a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 
@@ -103,11 +108,21 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
   <button class="close" style="align-self:flex-start" data-close="productOverlay">×</button>
 </div>
 <div class="field">
-  <label>Quantity / Weight</label>
-  <div class="qbar"><button type="button" id="qMinus">−</button><div class="qdisp"><span id="qtyShow">0.250</span><small id="unitShow">kg</small></div><button type="button" id="qPlus">+</button></div>
-  <!-- Quick presets container (smartly changes between kg and piece) -->
-  <div class="qgrid" id="qPresets"></div>
-  <input id="qty" type="hidden" value="0.25"><input id="unit" type="hidden" value="kg">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+    <label style="margin:0">Quantity / Weight</label>
+    <small style="color:var(--muted);font-size:11px">Click number to type any value (e.g. 5 or 12)</small>
+  </div>
+  <div class="qbar">
+    <button type="button" id="qMinus">−</button>
+    <div class="qdisp">
+      <input id="qtyInput" type="number" step="any" min="0" value="0.250" class="qty-field" inputmode="decimal">
+      <small id="unitShow" style="font-size:15px;color:var(--muted);font-weight:700">kg</small>
+    </div>
+    <button type="button" id="qPlus">+</button>
+  </div>
+  <!-- Quick 4 Buttons Only -->
+  <div class="qgrid four-only" id="qPresets"></div>
+  <input id="unit" type="hidden" value="kg">
 </div>
 <div class="two">
   <div class="field"><label>Price rate (₹)</label><input id="rate" type="number" min="0" step="0.01"></div>
@@ -417,83 +432,84 @@ function selectProduct(id) {
   $('sheetRate').textContent = money(selected.price) + ' / ' + selected.unit;
   $('sheetImg').innerHTML = `<img alt="" src="${esc(selected.image || art(selected))}">`;
   $('unit').value = selected.unit;
+  $('unitShow').textContent = selected.unit;
   $('rate').value = selected.price;
-  $('qty').value = selected.unit === 'kg' ? '0.25' : '1';
+  $('qtyInput').value = selected.unit === 'kg' ? '0.250' : '1';
   $('amount').value = '';
   $('hideProduct').textContent = selected.hidden ? '↗ Restore to menu' : 'Hide this sweet';
   $('directSold').style.display = selected.hidden ? 'none' : '';
   $('addCart').style.display = selected.hidden ? 'none' : '';
 
   buildSmartPresets(selected.unit);
-  calcFromQty();
+  calcFromQtyInput();
   open('productOverlay');
 }
 
-/* Smart Presets: Weight for kg (.100, .250, .500, 1.0) or Count for pieces (1, 2, 4, 6, 10, 12) */
+/* Quick 4 Buttons Only: +500g, -500g, +250g, -250g */
 function buildSmartPresets(unit) {
   const container = $('qPresets');
   if (unit === 'kg') {
-    const weights = [
-      { label: '100g', val: 0.100 },
-      { label: '250g', val: 0.250 },
-      { label: '500g', val: 0.500 },
-      { label: '750g', val: 0.750 },
-      { label: '1 kg', val: 1.000 },
-      { label: '2 kg', val: 2.000 },
-      { label: '5 kg', val: 5.000 }
-    ];
-    container.innerHTML = weights.map(w => `<button type="button" class="pos" data-set="${w.val}">${w.label}</button>`).join('') +
-      `<button type="button" class="neg" data-d="-0.1">−.1</button>`;
+    container.innerHTML = `
+      <button type="button" class="pos" data-adj="0.500">+500g</button>
+      <button type="button" class="neg" data-adj="-0.500">−500g</button>
+      <button type="button" class="pos" data-adj="0.250">+250g</button>
+      <button type="button" class="neg" data-adj="-0.250">−250g</button>
+    `;
   } else {
-    const pieces = [
-      { label: '1 pc', val: 1 },
-      { label: '2 pcs', val: 2 },
-      { label: '4 pcs', val: 4 },
-      { label: '6 pcs (½ dz)', val: 6 },
-      { label: '10 pcs', val: 10 },
-      { label: '12 pcs (1 dz)', val: 12 },
-      { label: '20 pcs', val: 20 },
-      { label: '24 pcs (2 dz)', val: 24 }
-    ];
-    container.innerHTML = pieces.map(p => `<button type="button" class="pos" data-set="${p.val}">${p.label}</button>`).join('');
+    container.innerHTML = `
+      <button type="button" class="pos" data-adj="1">+1 pc</button>
+      <button type="button" class="neg" data-adj="-1">−1 pc</button>
+      <button type="button" class="pos" data-adj="6">+6 pcs</button>
+      <button type="button" class="neg" data-adj="-6">−6 pcs</button>
+    `;
   }
 
-  container.querySelectorAll('[data-set]').forEach(b => b.onclick = () => {
-    $('qty').value = b.dataset.set;
-    calcFromQty();
+  container.querySelectorAll('[data-adj]').forEach(b => b.onclick = () => {
+    adj(+b.dataset.adj);
   });
-  container.querySelectorAll('[data-d]').forEach(b => b.onclick = () => adj(+b.dataset.d));
 }
 
-function showQty() { $('qtyShow').textContent = +(+$('qty').value).toFixed(3); $('unitShow').textContent = $('unit').value; }
-function calcFromQty() { showQty(); $('amount').value = ''; $('subtotal').textContent = money(Number($('qty').value) * Number($('rate').value)); }
+function calcFromQtyInput() {
+  const q = Number($('qtyInput').value || 0);
+  const r = Number($('rate').value || 0);
+  $('amount').value = '';
+  $('subtotal').textContent = money(q * r);
+}
+
+// User can directly click/tap on the quantity to type 5, 12, etc.
+$('qtyInput').oninput = calcFromQtyInput;
+$('qtyInput').onfocus = () => $('qtyInput').select();
+$('qtyInput').onclick = () => $('qtyInput').select();
 
 // Reverse calculation: Customer says "Give me ₹150 worth of Kaju Katli" -> automatically calculates exact weight!
 function calcFromAmount() {
-  const a = Number($('amount').value), r = Number($('rate').value);
+  const a = Number($('amount').value || 0), r = Number($('rate').value || 0);
   if (r > 0) {
-    $('qty').value = (a / r).toFixed(3);
-    showQty();
+    const q = a / r;
+    $('qtyInput').value = selected && selected.unit === 'kg' ? +(q.toFixed(3)) : Math.round(q);
     $('subtotal').textContent = money(a);
   } else {
     $('subtotal').textContent = money(0);
   }
 }
 
-$('rate').oninput = () => { $('sheetRate').textContent = money($('rate').value) + ' / ' + $('unit').value; calcFromQty(); };
+$('rate').oninput = () => {
+  $('sheetRate').textContent = money($('rate').value) + ' / ' + $('unit').value;
+  calcFromQtyInput();
+};
 $('amount').oninput = calcFromAmount;
 
 function adj(d) {
-  const step = selected && selected.unit === 'kg' ? 0.05 : 1;
-  const current = Number($('qty').value);
-  $('qty').value = +Math.max(0, current + d).toFixed(3);
-  calcFromQty();
+  const current = Number($('qtyInput').value || 0);
+  const next = Math.max(0, current + d);
+  $('qtyInput').value = selected && selected.unit === 'kg' ? (+(next.toFixed(3))) : Math.round(next);
+  calcFromQtyInput();
 }
 $('qMinus').onclick = () => adj(selected && selected.unit === 'kg' ? -0.25 : -1);
 $('qPlus').onclick = () => adj(selected && selected.unit === 'kg' ? 0.25 : 1);
 
 function lineFromSheet() {
-  const qty = Number($('qty').value), rate = Number($('rate').value);
+  const qty = Number($('qtyInput').value || 0), rate = Number($('rate').value || 0);
   const amount = $('amount').value.trim() === '' ? qty * rate : Number($('amount').value);
   return { id: selected.id, name: selected.name, qty, unit: $('unit').value, rate, amount };
 }
