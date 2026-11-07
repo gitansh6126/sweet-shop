@@ -5,3 +5,21 @@ Thumbs.db
 *.log
 .vscode/
 .idea/
+
+# Node dependencies
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment and secrets
+.env
+.env*.local
+
+# Dynamic runtime data & sales database
+# IMPORTANT: Protects local sales data from being overwritten, merged, or deleted on git pull/update
+/data/*.json
+/data/*.bak
+/data/*.tmp
+!/data/.gitkeep

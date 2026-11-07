@@ -60,17 +60,40 @@ button:active, a.btn:active{opacity:.8}
 .badge-active{background:var(--green2);color:var(--green)}
 .badge-hidden{background:var(--danger2);color:var(--danger)}
 
-.card-actions{display:flex;gap:6px;margin-top:10px}
-.card-actions button{flex:1;font-size:12px;padding:7px 8px;border-radius:9px}
+.card-actions{display:flex;gap:5px;margin-top:10px}
+.card-actions button{flex:1;font-size:11.5px;padding:7px 5px;border-radius:9px;white-space:nowrap}
 
-/* Overlays / Modals */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:20;padding:10px}
-.overlay.open{display:flex}
-.sheet{background:var(--card);width:100%;max-width:520px;border-radius:24px 24px 18px 18px;padding:18px 18px 24px;border:1px solid var(--line);max-height:92vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,.2)}
-@media(min-width:600px){.overlay{align-items:center}.sheet{border-radius:24px}}
-.handle{width:40px;height:4px;background:#d8d2c4;border-radius:4px;margin:0 auto 12px}
+html{scroll-behavior:smooth}
+@keyframes cardEnter{0%{opacity:0;transform:translateY(14px) scale(.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Overlays / Modals - Fluid Motion & Spring System */
+.overlay{position:fixed;inset:0;background:rgba(23,20,15,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;z-index:100;padding:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s cubic-bezier(.16,1,.3,1),visibility .3s cubic-bezier(.16,1,.3,1);will-change:opacity}
+.overlay.open,.overlay.show{opacity:1;visibility:visible;pointer-events:auto}
+.overlay.closing{opacity:0!important;visibility:visible!important;pointer-events:none!important;transition:opacity .28s cubic-bezier(.32,.72,0,1)!important}
+
+.sheet{background:var(--card);width:100%;max-width:540px;border-radius:26px 26px 0 0;padding:8px 18px calc(24px + env(safe-area-inset-bottom));border:1px solid var(--line);max-height:92vh;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;box-shadow:0 -12px 40px rgba(0,0,0,.18),0 -2px 10px rgba(0,0,0,.06);transform:translateY(105%);transition:transform .36s cubic-bezier(.22,1,.36,1);will-change:transform;position:relative;touch-action:pan-y}
+.overlay.open .sheet,.overlay.show .sheet{transform:translateY(0)}
+.overlay.closing .sheet{transform:translateY(105%)!important;transition:transform .28s cubic-bezier(.32,.72,0,1)!important}
+
+@media(min-width:640px){
+  .overlay{align-items:center;padding:20px}
+  .sheet{border-radius:26px;max-height:88vh;box-shadow:0 25px 65px rgba(0,0,0,.22),0 6px 18px rgba(0,0,0,.08);transform:translateY(45px) scale(.96);transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .32s ease}
+  .overlay.open .sheet,.overlay.show .sheet{transform:translateY(0) scale(1)}
+  .overlay.closing .sheet{transform:translateY(45px) scale(.96)!important}
+}
+
+/* Interactive Drag / Scroll-down Handle */
+.handle-wrap{padding:8px 0 14px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+.handle-wrap:active{cursor:grabbing}
+.handle{height:5px;width:44px;border-radius:6px;background:#d8d3c7;transition:width .2s cubic-bezier(.34,1.56,.64,1),background-color .2s ease,transform .2s ease}
+.handle-wrap:hover .handle,.sheet.dragging .handle{width:56px;background:var(--green);transform:scaleY(1.15)}
+.handle-cue{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-top:5px;opacity:0;transform:translateY(-3px);transition:opacity .2s ease,transform .2s ease;pointer-events:none}
+.handle-wrap:hover .handle-cue,.sheet.dragging .handle-cue{opacity:.85;transform:translateY(0)}
+
 .modal-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.close{width:32px;height:32px;border-radius:50%;background:#ede8dd;color:var(--ink);font-size:18px;display:flex;align-items:center;justify-content:center;padding:0;border:0;cursor:pointer}
+.close{width:36px;height:36px;border-radius:50%;background:#ede8dd;color:var(--ink);font-size:20px;display:grid;place-items:center;line-height:1;padding:0;border:0;cursor:pointer;flex-shrink:0;transition:transform .22s cubic-bezier(.34,1.56,.64,1),background-color .2s ease,color .2s ease}
+.close:hover{background:#dfd8cb;color:#111;transform:rotate(90deg) scale(1.08)}
+.close:active{transform:rotate(90deg) scale(.92)}
 
 /* Form Styles */
 .field{margin-bottom:12px}
@@ -91,10 +114,43 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
 .img-preview-thumb{width:54px;height:54px;border-radius:10px;overflow:hidden;background:#fff;border:1px solid var(--line);flex-shrink:0}
 .img-preview-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 
+/* Photo Option Action Buttons */
+.photo-actions-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.photo-btn{padding:9px 12px;font-size:12.5px;font-weight:700;border-radius:10px;border:1px solid var(--line);background:#faf8f5;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .15s ease}
+.photo-btn:hover{background:#ede8dd;border-color:#d0c9bb}
+.photo-btn.camera{background:#fef3c7;border-color:#fde68a;color:#92400e}
+.photo-btn.camera:hover{background:#fde68a;border-color:#fcd34d}
+
+/* Camera Viewfinder Modal */
+#cameraOverlay{z-index:25}
+.camera-sheet{max-width:440px;padding:16px 16px 20px}
+.camera-viewport-wrap{position:relative;width:100%;border-radius:16px;overflow:hidden;background:#181715;aspect-ratio:4/3;margin:8px 0 14px;box-shadow:inset 0 0 20px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
+.camera-viewport{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+#cameraVideo,#cameraSnapshotPreview{width:100%;height:100%;object-fit:cover;display:block}
+#cameraVideo.mirrored{transform:scaleX(-1)}
+.camera-reticle{position:absolute;inset:16px;border-radius:12px;border:1.5px dashed rgba(255,255,255,.45);pointer-events:none;display:flex;align-items:center;justify-content:center}
+.camera-reticle::after{content:'Frame sweet here';position:absolute;bottom:8px;font-size:11px;font-weight:700;color:rgba(255,255,255,.9);background:rgba(0,0,0,.55);padding:3px 9px;border-radius:12px;letter-spacing:.3px}
+.reticle-corner{position:absolute;width:16px;height:16px;border-color:#fff;border-style:solid}
+.reticle-corner.tl{top:-2px;left:-2px;border-width:3px 0 0 3px;border-top-left-radius:6px}
+.reticle-corner.tr{top:-2px;right:-2px;border-width:3px 3px 0 0;border-top-right-radius:6px}
+.reticle-corner.bl{bottom:-2px;left:-2px;border-width:0 0 3px 3px;border-bottom-left-radius:6px}
+.reticle-corner.br{bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-bottom-right-radius:6px}
+.camera-flip-btn{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px;z-index:2}
+.camera-flip-btn:active{transform:scale(.95)}
+.camera-error{position:absolute;inset:0;padding:20px;background:#24231f;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:3}
+.camera-live-controls{display:flex;align-items:center;justify-content:space-between;padding:0 8px}
+.camera-live-controls button{font-size:13px;padding:9px 14px}
+.shutter-btn{width:64px;height:64px;border-radius:50%;background:#ffffff;border:4px solid #d97706;padding:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .1s ease,box-shadow .15s ease;box-shadow:0 4px 14px rgba(217,119,6,.35)}
+.shutter-btn:active{transform:scale(.92)}
+.shutter-inner{width:100%;height:100%;border-radius:50%;background:#d97706;display:block;transition:all .1s ease}
+.shutter-btn:active .shutter-inner{background:#b45309;transform:scale(.9)}
+.camera-review-controls{display:flex;gap:10px}
+.camera-review-controls button{padding:12px;font-size:14px;border-radius:12px}
+
 .checkout{width:100%;padding:13px;font-size:15px;font-weight:800;border-radius:13px;background:var(--green);color:#fff;border:0;cursor:pointer;margin-top:8px}
 .backup-card{background:#f6f4ef;border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:8px;margin-bottom:12px}
 
-.toast{position:fixed;top:15px;left:50%;transform:translate(-50%,-20px);background:#24231f;color:white;padding:10px 18px;border-radius:30px;opacity:0;transition:.2s;z-index:30;pointer-events:none;font-weight:600;font-size:13px}
+.toast{position:fixed;top:15px;left:50%;transform:translate(-50%,-20px);background:#24231f;color:white;padding:10px 18px;border-radius:30px;opacity:0;transition:.2s;z-index:40;pointer-events:none;font-weight:600;font-size:13px}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .empty{text-align:center;padding:40px 16px;color:var(--muted);background:var(--card);border-radius:16px;border:1px dashed var(--line);grid-column:1/-1}
 </style>
@@ -111,6 +167,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
   </div>
   <div class="top-actions">
     <a href="index.html" class="btn primary">← Back to Billing</a>
+    <a href="sales-history.html" class="btn ghost">📊 Sale History</a>
     <button class="ghost" id="backupBtn">💾 Data Backup</button>
     <button class="btn-accent" id="addProductBtn">＋ Add new sweet</button>
   </div>
@@ -152,7 +209,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
 </div>
 
 <!-- EDIT SWEET MODAL (Change Name, Price, Unit, Photo, or Delete) -->
-<div class="overlay" id="editOverlay"><div class="sheet"><div class="handle"></div>
+<div class="overlay" id="editOverlay"><div class="sheet"><div class="handle-wrap" title="Drag down or scroll down to close"><div class="handle"></div><div class="handle-cue">↓ scroll or drag down to close</div></div>
 <div class="modal-title">
   <div>
     <h2 style="margin:0;font-size:18px">✏️ Change price / photo</h2>
@@ -171,14 +228,19 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
 
   <!-- Image Update Section -->
   <div class="field">
-    <label>Sweet Photo (Click or drop to replace)</label>
+    <label>Sweet Photo</label>
+    <div class="photo-actions-bar">
+      <button type="button" class="photo-btn" id="editUploadFileBtn">📁 Upload File</button>
+      <button type="button" class="photo-btn camera" id="editCameraBtn">📸 Take Photo (Camera)</button>
+    </div>
     <div class="drop-box" id="editDropBox">
       <div class="drop-icon">📷</div>
-      <div class="drop-title">Upload new photo</div>
-      <div class="drop-sub">Auto-optimizes to WebP — saved safely in local storage</div>
+      <div class="drop-title">Upload photo or use camera</div>
+      <div class="drop-sub">Drag & drop photo here, or use buttons above · Auto-optimizes to WebP</div>
       <div class="progress-container" id="editUploadProgress"><div class="progress-fill" id="editUploadBar"></div></div>
       <div id="editUploadStatus" style="font-size:11px;color:var(--green);font-weight:700;margin-top:6px;display:none"></div>
       <input type="file" id="editFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
+      <input type="file" id="editDirectCameraInput" accept="image/*" capture="environment" style="display:none">
     </div>
 
     <!-- Current Photo Preview -->
@@ -197,7 +259,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
 </div></div>
 
 <!-- ADD NEW SWEET MODAL -->
-<div class="overlay" id="addOverlay"><div class="sheet"><div class="handle"></div>
+<div class="overlay" id="addOverlay"><div class="sheet"><div class="handle-wrap" title="Drag down or scroll down to close"><div class="handle"></div><div class="handle-cue">↓ scroll or drag down to close</div></div>
 <div class="modal-title">
   <div>
     <h2 style="margin:0;font-size:18px">＋ Add new sweet to menu</h2>
@@ -215,13 +277,18 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
   
   <div class="field">
     <label>Sweet Photo</label>
+    <div class="photo-actions-bar">
+      <button type="button" class="photo-btn" id="addUploadFileBtn">📁 Upload File</button>
+      <button type="button" class="photo-btn camera" id="addCameraBtn">📸 Take Photo (Camera)</button>
+    </div>
     <div class="drop-box" id="addDropBox">
       <div class="drop-icon">📷</div>
-      <div class="drop-title">Click or Drop Photo here</div>
-      <div class="drop-sub">Auto-optimizes to WebP — saved safely in local storage</div>
+      <div class="drop-title">Upload photo or use camera</div>
+      <div class="drop-sub">Drag & drop photo here, or use buttons above · Auto-optimizes to WebP</div>
       <div class="progress-container" id="addUploadProgress"><div class="progress-fill" id="addUploadBar"></div></div>
       <div id="addUploadStatus" style="font-size:11px;color:var(--green);font-weight:700;margin-top:6px;display:none"></div>
       <input type="file" id="addFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
+      <input type="file" id="addDirectCameraInput" accept="image/*" capture="environment" style="display:none">
     </div>
 
     <div class="img-preview-card" id="addPreviewCard" style="display:none">
@@ -238,25 +305,83 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
 </form>
 </div></div>
 
+<!-- CAMERA CAPTURE MODAL -->
+<div class="overlay" id="cameraOverlay">
+  <div class="sheet camera-sheet">
+    <div class="handle-wrap" title="Drag down or scroll down to close"><div class="handle"></div><div class="handle-cue">↓ scroll or drag down to close</div></div>
+    <div class="modal-title">
+      <div>
+        <h2 style="margin:0;font-size:18px" id="cameraModalTitle">📸 Take Sweet Photo</h2>
+        <div style="font-size:12px;color:var(--muted)" id="cameraModalSubtitle">Align sweet inside the frame</div>
+      </div>
+      <button class="close" id="closeCameraBtn" type="button" data-close="cameraOverlay">×</button>
+    </div>
+
+    <div class="camera-viewport-wrap">
+      <div class="camera-viewport" id="cameraViewport">
+        <video id="cameraVideo" autoplay playsinline muted></video>
+        <canvas id="cameraCanvas" style="display:none"></canvas>
+        <img id="cameraSnapshotPreview" alt="Captured sweet photo" style="display:none">
+        
+        <div class="camera-reticle" id="cameraReticle">
+          <div class="reticle-corner tl"></div>
+          <div class="reticle-corner tr"></div>
+          <div class="reticle-corner bl"></div>
+          <div class="reticle-corner br"></div>
+        </div>
+
+        <button type="button" class="camera-flip-btn" id="cameraFlipBtn" title="Switch camera" style="display:none">
+          🔄 Flip
+        </button>
+      </div>
+
+      <div class="camera-error" id="cameraError" style="display:none">
+        <div style="font-size:32px;margin-bottom:8px">📷</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px" id="cameraErrorMsg">Camera stream unavailable</div>
+        <div style="font-size:12px;color:#d8d2c4;margin-bottom:14px;max-width:280px">You can snap directly using your device's built-in camera app:</div>
+        <button type="button" class="primary" id="fallbackNativeCameraBtn" style="width:auto;padding:10px 18px">📱 Open Device Camera</button>
+      </div>
+    </div>
+
+    <!-- Live controls -->
+    <div class="camera-live-controls" id="cameraLiveControls">
+      <button type="button" class="ghost" id="cameraCancelBtn">Cancel</button>
+      <button type="button" class="shutter-btn" id="cameraShutterBtn" title="Capture Photo">
+        <span class="shutter-inner"></span>
+      </button>
+      <button type="button" class="ghost" id="cameraDeviceFallbackBtn" title="Use native camera app">📱 Native</button>
+    </div>
+
+    <!-- Review controls after capture -->
+    <div class="camera-review-controls" id="cameraReviewControls" style="display:none">
+      <button type="button" class="ghost" id="cameraRetakeBtn" style="flex:1">🔄 Retake</button>
+      <button type="button" class="primary" id="cameraUsePhotoBtn" style="flex:1.5">✅ Use this Photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden native camera input for quick photo from sweet cards -->
+<input type="file" id="quickDirectCameraInput" accept="image/*" capture="environment" style="display:none">
+
 <!-- DATA BACKUP & RESTORE MODAL -->
-<div class="overlay" id="backupOverlay"><div class="sheet"><div class="handle"></div>
+<div class="overlay" id="backupOverlay"><div class="sheet"><div class="handle-wrap" title="Drag down or scroll down to close"><div class="handle"></div><div class="handle-cue">↓ scroll or drag down to close</div></div>
 <div class="modal-title">
   <h2 style="margin:0;font-size:18px">Data Protection & Backups</h2>
   <button class="close" data-close="backupOverlay">×</button>
 </div>
 <div style="margin-top:10px;font-size:13px;color:var(--muted)">
-  Your sweet prices, custom products, and daily sales are saved securely in your browser's dual storage (LocalStorage & IndexedDB). You can download a backup copy or restore anytime.
+  Your sweet prices, custom products, and photos are saved securely in your browser's dual storage (LocalStorage & IndexedDB). Sales records are securely recorded in the online cloud ledger.
 </div>
 
 <div class="backup-card" style="margin-top:14px">
-  <div style="font-weight:700;color:var(--ink)">💾 Download Backup File</div>
-  <div style="font-size:12px;color:var(--muted)">Saves all custom sweets, updated prices, photos, and sales history.</div>
-  <button class="primary" id="downloadBackupBtn" style="margin-top:6px">Download Backup (JSON)</button>
+  <div style="font-weight:700;color:var(--ink)">💾 Download Menu Backup</div>
+  <div style="font-size:12px;color:var(--muted)">Saves all custom sweets, updated prices, and custom photos.</div>
+  <button class="primary" id="downloadBackupBtn" style="margin-top:6px">Download Menu Backup (JSON)</button>
 </div>
 
 <div class="backup-card">
-  <div style="font-weight:700;color:var(--ink)">📂 Restore from Backup File</div>
-  <div style="font-size:12px;color:var(--muted)">Restore your menu and sales records on this device or transfer to another device.</div>
+  <div style="font-weight:700;color:var(--ink)">📂 Restore Menu from Backup</div>
+  <div style="font-size:12px;color:var(--muted)">Restore your sweet catalog and prices on this device or transfer to another counter.</div>
   <input type="file" id="restoreFileInput" accept=".json" style="display:none">
   <button class="ghost" id="restoreBackupBtn" style="margin-top:6px">Choose Backup File to Restore</button>
 </div>
@@ -270,13 +395,17 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
 
 <div class="toast" id="toast"></div>
 
+<!-- Online Sales Cloud Service -->
+<script src="sales-cloud.js"></script>
+
 <script>
 /* ========================================================
    1. STORAGE ENGINE
    ======================================================== */
 const ls = {
   get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
-  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  remove(k) { try { localStorage.removeItem(k); } catch (e) {} }
 };
 
 let idb = null;
@@ -387,10 +516,221 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-function open(id) { $(id).classList.add('open'); }
-function close(id) { $(id).classList.remove('open'); }
-document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => close(b.dataset.close));
-document.querySelectorAll('.overlay').forEach(o => o.onclick = e => { if (e.target === o) close(o.id); });
+/* ========================================================
+   FLUID MOTION GRAPHICS & PULL/SCROLL-TO-DISMISS ENGINE
+   ======================================================== */
+function animateAndClose(overlayEl, sheet, onDone) {
+  if (!overlayEl || overlayEl.dataset.closing === 'true') return;
+  overlayEl.dataset.closing = 'true';
+  overlayEl.classList.add('closing');
+
+  if (sheet) {
+    sheet.style.transition = 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1)';
+    sheet.style.transform = 'translateY(105%)';
+  }
+
+  setTimeout(() => {
+    overlayEl.classList.remove('open');
+    overlayEl.classList.remove('show');
+    overlayEl.classList.remove('closing');
+    overlayEl.dataset.closing = 'false';
+    if (sheet) {
+      sheet.style.transition = '';
+      sheet.style.transform = '';
+      sheet.classList.remove('dragging');
+    }
+    overlayEl.style.transition = '';
+    overlayEl.style.backgroundColor = '';
+    finishManageClose(overlayEl.id);
+    if (typeof onDone === 'function') onDone(overlayEl.id);
+  }, 280);
+}
+
+function finishManageClose(id) {
+  if (id === 'cameraOverlay' && typeof stopCamera === 'function') stopCamera();
+}
+
+function open(id) {
+  const el = $(id);
+  if (!el) return;
+  const sheet = el.querySelector('.sheet');
+  if (sheet) {
+    sheet.style.transition = '';
+    sheet.style.transform = '';
+    sheet.classList.remove('dragging');
+  }
+  el.style.transition = '';
+  el.style.backgroundColor = '';
+  el.classList.remove('closing');
+  el.dataset.closing = 'false';
+  el.classList.add('open');
+  el.classList.add('show');
+}
+
+function close(id) {
+  if (id === 'cameraOverlay' && typeof stopCamera === 'function') stopCamera();
+  const el = $(id);
+  if (!el || (!el.classList.contains('open') && !el.classList.contains('show')) || el.dataset.closing === 'true') return;
+  const sheet = el.querySelector('.sheet');
+  animateAndClose(el, sheet);
+}
+
+function setupSheetGestures(overlayEl) {
+  const sheet = overlayEl.querySelector('.sheet');
+  if (!sheet) return;
+
+  let startY = 0;
+  let currentY = 0;
+  let isDragging = false;
+  let startTime = 0;
+  let isFromHandleOrHead = false;
+
+  function getY(e) {
+    return e.touches && e.touches.length ? e.touches[0].clientY : e.clientY;
+  }
+
+  function startDrag(e) {
+    if (e.type === 'mousedown' && e.button !== 0) return;
+    if (overlayEl.dataset.closing === 'true') return;
+
+    if (e.target.closest('button, input, select, textarea, a, .photo-btn, .drop-box, video, canvas')) {
+      return;
+    }
+
+    const handleWrap = e.target.closest('.handle-wrap, .handle');
+    const head = e.target.closest('.modal-title');
+    isFromHandleOrHead = Boolean(handleWrap || head);
+
+    if (!isFromHandleOrHead && sheet.scrollTop > 2) return;
+
+    startY = getY(e);
+    currentY = startY;
+    startTime = Date.now();
+    isDragging = false;
+  }
+
+  function moveDrag(e) {
+    if (startY === 0) return;
+    const y = getY(e);
+    const dy = y - startY;
+
+    if (!isFromHandleOrHead && sheet.scrollTop > 2) return;
+
+    if (dy > 4) {
+      if (!isDragging) {
+        isDragging = true;
+        sheet.classList.add('dragging');
+        sheet.style.transition = 'none';
+        overlayEl.style.transition = 'none';
+      }
+
+      if (e.cancelable) e.preventDefault();
+
+      let damped = dy;
+      if (dy > 110) {
+        damped = 110 + (dy - 110) * 0.65;
+      }
+      sheet.style.transform = `translateY(${Math.max(0, damped)}px)`;
+
+      const progress = Math.min(1, damped / (sheet.offsetHeight || 420));
+      overlayEl.style.backgroundColor = `rgba(23, 20, 15, ${Math.max(0.06, 0.55 * (1 - progress * 0.85))})`;
+    } else if (dy < 0 && isFromHandleOrHead) {
+      sheet.style.transform = `translateY(${dy * 0.25}px)`;
+    }
+  }
+
+  function endDrag(e) {
+    if (startY === 0) return;
+    const dy = currentY - startY;
+    const duration = Math.max(1, Date.now() - startTime);
+    const velocity = dy / duration;
+
+    sheet.classList.remove('dragging');
+
+    if (isDragging) {
+      isDragging = false;
+      startY = 0;
+
+      if (dy > 80 || (dy > 35 && velocity > 0.35)) {
+        animateAndClose(overlayEl, sheet);
+      } else {
+        sheet.style.transition = 'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.25)';
+        sheet.style.transform = '';
+        overlayEl.style.transition = 'background-color 0.3s ease';
+        overlayEl.style.backgroundColor = '';
+        setTimeout(() => {
+          sheet.style.transition = '';
+          overlayEl.style.transition = '';
+        }, 360);
+      }
+    } else {
+      startY = 0;
+    }
+  }
+
+  sheet.addEventListener('touchstart', startDrag, { passive: true });
+  sheet.addEventListener('touchmove', moveDrag, { passive: false });
+  sheet.addEventListener('touchend', endDrag);
+  sheet.addEventListener('touchcancel', endDrag);
+
+  sheet.addEventListener('mousedown', startDrag);
+  window.addEventListener('mousemove', e => {
+    if (startY !== 0) {
+      currentY = getY(e);
+      moveDrag(e);
+    }
+  });
+  window.addEventListener('mouseup', e => {
+    if (startY !== 0) {
+      currentY = getY(e);
+      endDrag(e);
+    }
+  });
+
+  let wheelSum = 0;
+  let wheelTimer = null;
+  sheet.addEventListener('wheel', e => {
+    const isHandle = e.target.closest('.handle-wrap, .handle');
+    const isHead = e.target.closest('.modal-title');
+    const atTop = sheet.scrollTop <= 1;
+
+    if ((isHandle || isHead) && Math.abs(e.deltaY) > 15) {
+      wheelSum += Math.abs(e.deltaY);
+      if (wheelSum > 45) {
+        wheelSum = 0;
+        animateAndClose(overlayEl, sheet);
+      }
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => { wheelSum = 0; }, 300);
+    } else if (atTop && e.deltaY < -25) {
+      wheelSum += Math.abs(e.deltaY);
+      if (wheelSum > 60) {
+        wheelSum = 0;
+        animateAndClose(overlayEl, sheet);
+      }
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => { wheelSum = 0; }, 300);
+    }
+  }, { passive: true });
+}
+
+document.querySelectorAll('.overlay').forEach(o => {
+  setupSheetGestures(o);
+  o.addEventListener('click', e => {
+    if (e.target === o) close(o.id);
+  });
+});
+
+document.querySelectorAll('[data-close]').forEach(b => {
+  b.onclick = () => close(b.dataset.close);
+});
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const openOverlay = document.querySelector('.overlay.open, .overlay.show');
+    if (openOverlay) close(openOverlay.id);
+  }
+});
 
 /* Filter states */
 let statusFilter = 'all'; // 'all', 'active', 'hidden'
@@ -450,11 +790,11 @@ function renderProducts() {
     return;
   }
 
-  grid.innerHTML = list.map(p => {
+  grid.innerHTML = list.map((p, i) => {
     const isHidden = !!p.hidden;
     const imgUrl = p.image || art(p);
     return `
-      <div class="card ${isHidden ? 'is-hidden' : ''}">
+      <div class="card ${isHidden ? 'is-hidden' : ''}" style="animation-delay:${Math.min(i * 18, 220)}ms">
         <div class="thumb">
           <img src="${esc(imgUrl)}" alt="${esc(p.name)}" loading="lazy">
         </div>
@@ -470,7 +810,8 @@ function renderProducts() {
             <div class="card-price">${money(p.price)} <small style="font-size:12px;font-weight:600;color:var(--muted)">/ ${p.unit || 'kg'}</small></div>
           </div>
           <div class="card-actions">
-            <button type="button" class="primary" data-edit="${p.id}">✏️ Change price / photo</button>
+            <button type="button" class="primary" data-edit="${p.id}">✏️ Edit</button>
+            <button type="button" class="ghost" data-quick-cam="${p.id}" title="Take photo with camera">📸 Photo</button>
             <button type="button" class="ghost" data-toggle-hide="${p.id}" style="${isHidden ? 'color:var(--green);font-weight:700' : 'color:var(--muted)'}">
               ${isHidden ? '↗ Restore' : '👁️ Hide'}
             </button>
@@ -486,6 +827,15 @@ function renderProducts() {
       const id = Number(b.dataset.edit);
       const sweet = products.find(p => p.id === id);
       if (sweet) openEditModal(sweet);
+    };
+  });
+
+  // Wire Quick Camera button
+  grid.querySelectorAll('[data-quick-cam]').forEach(b => {
+    b.onclick = () => {
+      const id = Number(b.dataset.quickCam);
+      const sweet = products.find(p => p.id === id);
+      if (sweet) openCameraModal({ mode: 'quick', sweetId: id });
     };
   });
 
@@ -572,6 +922,9 @@ function updateEditImgPreview(url, label) {
 
 const editDropBox = $('editDropBox');
 const editFileInput = $('editFileInput');
+const editDirectCameraInput = $('editDirectCameraInput');
+$('editUploadFileBtn').onclick = () => editFileInput.click();
+$('editCameraBtn').onclick = () => openCameraModal({ mode: 'edit' });
 editDropBox.onclick = () => editFileInput.click();
 editDropBox.ondragover = e => { e.preventDefault(); editDropBox.classList.add('dragover'); };
 editDropBox.ondragleave = () => editDropBox.classList.remove('dragover');
@@ -581,6 +934,9 @@ editDropBox.ondrop = e => {
   if (e.dataTransfer.files && e.dataTransfer.files[0]) handleEditFile(e.dataTransfer.files[0]);
 };
 editFileInput.onchange = e => {
+  if (e.target.files && e.target.files[0]) handleEditFile(e.target.files[0]);
+};
+editDirectCameraInput.onchange = e => {
   if (e.target.files && e.target.files[0]) handleEditFile(e.target.files[0]);
 };
 
@@ -667,6 +1023,9 @@ $('addProductBtn').onclick = () => {
 
 const addDropBox = $('addDropBox');
 const addFileInput = $('addFileInput');
+const addDirectCameraInput = $('addDirectCameraInput');
+$('addUploadFileBtn').onclick = () => addFileInput.click();
+$('addCameraBtn').onclick = () => openCameraModal({ mode: 'add' });
 addDropBox.onclick = () => addFileInput.click();
 addDropBox.ondragover = e => { e.preventDefault(); addDropBox.classList.add('dragover'); };
 addDropBox.ondragleave = () => addDropBox.classList.remove('dragover');
@@ -676,6 +1035,9 @@ addDropBox.ondrop = e => {
   if (e.dataTransfer.files && e.dataTransfer.files[0]) handleAddFile(e.dataTransfer.files[0]);
 };
 addFileInput.onchange = e => {
+  if (e.target.files && e.target.files[0]) handleAddFile(e.target.files[0]);
+};
+addDirectCameraInput.onchange = e => {
   if (e.target.files && e.target.files[0]) handleAddFile(e.target.files[0]);
 };
 
@@ -746,16 +1108,229 @@ $('addForm').onsubmit = e => {
 };
 
 /* ========================================================
-   5. BACKUP & RESTORE
+   5. CAMERA CONTROLLER & CAPTURE
+   ======================================================== */
+let cameraStream = null;
+let currentFacingMode = 'environment';
+let cameraTarget = null; // { mode: 'edit' | 'add' | 'quick', sweetId?: number }
+let capturedBlob = null;
+
+async function checkCameraDevices() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(d => d.kind === 'videoinput');
+    $('cameraFlipBtn').style.display = videoDevices.length > 1 ? 'inline-flex' : 'none';
+  } catch (e) {
+    $('cameraFlipBtn').style.display = 'none';
+  }
+}
+
+async function startCameraStream() {
+  stopCamera();
+  $('cameraError').style.display = 'none';
+  $('cameraViewport').style.display = 'flex';
+  $('cameraLiveControls').style.display = 'flex';
+  $('cameraReviewControls').style.display = 'none';
+  $('cameraSnapshotPreview').style.display = 'none';
+  $('cameraVideo').style.display = 'block';
+  $('cameraReticle').style.display = 'flex';
+
+  const video = $('cameraVideo');
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showCameraError('Camera stream is not supported in this browser context.');
+    return;
+  }
+
+  try {
+    const constraints = {
+      video: {
+        facingMode: { ideal: currentFacingMode },
+        width: { ideal: 1280 },
+        height: { ideal: 960 }
+      },
+      audio: false
+    };
+
+    cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.srcObject = cameraStream;
+    if (currentFacingMode === 'user') {
+      video.classList.add('mirrored');
+    } else {
+      video.classList.remove('mirrored');
+    }
+    await video.play().catch(() => {});
+    await checkCameraDevices();
+  } catch (err) {
+    console.warn('Camera error:', err);
+    showCameraError(err.name === 'NotAllowedError'
+      ? 'Camera permission denied. Please allow camera access in browser.'
+      : 'Could not start camera feed (' + (err.name || 'error') + ').');
+  }
+}
+
+function showCameraError(msg) {
+  $('cameraErrorMsg').textContent = msg;
+  $('cameraError').style.display = 'flex';
+  $('cameraLiveControls').style.display = 'none';
+  $('cameraReviewControls').style.display = 'none';
+}
+
+function stopCamera() {
+  if (cameraStream) {
+    try {
+      cameraStream.getTracks().forEach(t => t.stop());
+    } catch (e) {}
+    cameraStream = null;
+  }
+  const video = $('cameraVideo');
+  if (video) video.srcObject = null;
+}
+
+function openCameraModal(target) {
+  cameraTarget = target;
+  capturedBlob = null;
+  if (target.mode === 'quick') {
+    const sw = products.find(p => p.id === target.sweetId);
+    $('cameraModalTitle').textContent = `📸 Photo — ${sw ? sw.name : 'Sweet'}`;
+    $('cameraModalSubtitle').textContent = 'Capture fresh photo for this sweet';
+  } else if (target.mode === 'add') {
+    $('cameraModalTitle').textContent = '📸 Photo for New Sweet';
+    $('cameraModalSubtitle').textContent = 'Capture product photo for counter';
+  } else {
+    const name = ($('editSweetName').value || 'Sweet').trim();
+    $('cameraModalTitle').textContent = `📸 Photo — ${name}`;
+    $('cameraModalSubtitle').textContent = 'Capture new photo to replace current image';
+  }
+
+  open('cameraOverlay');
+  startCameraStream();
+}
+
+function closeCameraModal() {
+  stopCamera();
+  close('cameraOverlay');
+  capturedBlob = null;
+}
+
+$('closeCameraBtn').onclick = closeCameraModal;
+$('cameraCancelBtn').onclick = closeCameraModal;
+
+$('cameraFlipBtn').onclick = () => {
+  currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+  startCameraStream();
+};
+
+$('cameraShutterBtn').onclick = () => {
+  const video = $('cameraVideo');
+  const canvas = $('cameraCanvas');
+  if (!video || !video.videoWidth) return;
+
+  const w = video.videoWidth;
+  const h = video.videoHeight;
+  canvas.width = w;
+  canvas.height = h;
+
+  const ctx = canvas.getContext('2d');
+  if (currentFacingMode === 'user') {
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+  }
+  ctx.drawImage(video, 0, 0, w, h);
+
+  canvas.toBlob(blob => {
+    if (!blob) return;
+    capturedBlob = blob;
+    $('cameraSnapshotPreview').src = URL.createObjectURL(blob);
+    $('cameraSnapshotPreview').style.display = 'block';
+    $('cameraVideo').style.display = 'none';
+    $('cameraReticle').style.display = 'none';
+
+    $('cameraLiveControls').style.display = 'none';
+    $('cameraReviewControls').style.display = 'flex';
+  }, 'image/jpeg', 0.92);
+};
+
+$('cameraRetakeBtn').onclick = () => {
+  capturedBlob = null;
+  $('cameraSnapshotPreview').style.display = 'none';
+  $('cameraVideo').style.display = 'block';
+  $('cameraReticle').style.display = 'flex';
+  $('cameraLiveControls').style.display = 'flex';
+  $('cameraReviewControls').style.display = 'none';
+};
+
+$('cameraUsePhotoBtn').onclick = async () => {
+  if (!capturedBlob || !cameraTarget) return;
+  const target = cameraTarget;
+  const blob = capturedBlob;
+  closeCameraModal();
+
+  if (target.mode === 'edit') {
+    await handleEditFile(blob);
+  } else if (target.mode === 'add') {
+    await handleAddFile(blob);
+  } else if (target.mode === 'quick') {
+    const sweet = products.find(p => p.id === target.sweetId);
+    if (!sweet) return;
+    toast('Optimizing photo...');
+    const res = await optimizePhoto(blob);
+    if (res.success && res.url) {
+      sweet.image = res.url;
+      save();
+      renderProducts();
+      toast(`✅ Photo updated for "${sweet.name}"`);
+    } else {
+      toast('Failed to save photo');
+    }
+  }
+};
+
+function triggerNativeCamera() {
+  const target = cameraTarget;
+  closeCameraModal();
+  if (target && target.mode === 'edit') {
+    $('editDirectCameraInput').click();
+  } else if (target && target.mode === 'add') {
+    $('addDirectCameraInput').click();
+  } else if (target && target.mode === 'quick') {
+    $('quickDirectCameraInput').click();
+  }
+}
+
+$('fallbackNativeCameraBtn').onclick = triggerNativeCamera;
+$('cameraDeviceFallbackBtn').onclick = triggerNativeCamera;
+
+$('quickDirectCameraInput').onchange = async e => {
+  const file = e.target.files && e.target.files[0];
+  if (!file || !cameraTarget || cameraTarget.mode !== 'quick') return;
+  const sweet = products.find(p => p.id === cameraTarget.sweetId);
+  if (!sweet) return;
+  toast('Processing photo...');
+  const res = await optimizePhoto(file);
+  if (res.success && res.url) {
+    sweet.image = res.url;
+    save();
+    renderProducts();
+    toast(`✅ Photo updated for "${sweet.name}"`);
+  } else {
+    toast('Failed to update photo');
+  }
+  $('quickDirectCameraInput').value = '';
+};
+
+/* ========================================================
+   6. BACKUP & RESTORE
    ======================================================== */
 $('backupBtn').onclick = () => open('backupOverlay');
 
 $('downloadBackupBtn').onclick = () => {
   const backupData = {
-    version: '1.0',
+    version: '2.0',
     export_date: new Date().toISOString(),
     products: products,
-    sales: JSON.parse(ls.get('mithai_sales') || '[]'),
+    sales_policy: 'Stored exclusively in online cloud database (zero local storage retention)',
     deleted_ids: Array.from(deletedIds)
   };
   const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
@@ -763,9 +1338,9 @@ $('downloadBackupBtn').onclick = () => {
   a.href = URL.createObjectURL(blob);
   const d = new Date();
   const ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-  a.download = `sweet_shop_backup_${ds}.json`;
+  a.download = `sweet_shop_menu_backup_${ds}.json`;
   a.click();
-  toast('Backup file downloaded');
+  toast('Menu backup file downloaded');
 };
 
 $('restoreBackupBtn').onclick = () => $('restoreFileInput').click();
@@ -779,15 +1354,15 @@ $('restoreFileInput').onchange = e => {
       const data = JSON.parse(ev.target.result);
       if (Array.isArray(data.products)) {
         products = data.products;
-        if (Array.isArray(data.sales)) ls.set('mithai_sales', JSON.stringify(data.sales));
         if (Array.isArray(data.deleted_ids)) {
           deletedIds.clear();
           data.deleted_ids.forEach(id => deletedIds.add(id));
         }
+        if (window.SalesCloud) SalesCloud.verifyNoLocalStorageSales();
         save();
         renderProducts();
         close('backupOverlay');
-        toast('Data restored successfully!');
+        toast('Menu data restored successfully!');
       } else {
         alert('Invalid backup file format');
       }

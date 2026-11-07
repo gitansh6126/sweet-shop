@@ -1,0 +1,19 @@
+{
+  "name": "mithai-counter-sweet-shop",
+  "version": "2.0.0",
+  "description": "Sweet Shop POS billing application with online cloud sales recording and dedicated sales history ledger",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "pos",
+    "sweet-shop",
+    "mithai-counter",
+    "sales-ledger",
+    "cloud-billing"
+  ],
+  "author": "gitansh6126",
+  "license": "MIT"
+}

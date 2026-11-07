@@ -11,6 +11,9 @@
       --card-bg: #ffffff;
       --text: #1f2937;
     }
+    html {
+      scroll-behavior: smooth;
+    }
     * {
       box-sizing: border-box;
       margin: 0;
@@ -52,18 +55,23 @@
       max-width: 1300px;
       margin: 0 auto;
     }
+    @keyframes cardEnter {
+      0% { opacity: 0; transform: translateY(16px) scale(0.97); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
     .card {
       background: var(--card-bg);
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
       display: flex;
       flex-direction: column;
+      animation: cardEnter 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
     }
     .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.12);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px -3px rgba(146, 64, 14, 0.15);
     }
     .img-wrap {
       width: 100%;
@@ -133,6 +141,9 @@
       <a href="index.html" style="text-decoration: none; background: #246b4b; color: #fff; padding: 0.5rem 1.25rem; border-radius: 9999px; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px;">
         💳 Open Billing Counter
       </a>
+      <a href="sales-history.html" style="text-decoration: none; background: #fff; color: #374151; border: 1px solid #d1d5db; padding: 0.5rem 1.25rem; border-radius: 9999px; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px;">
+        📊 Sales History
+      </a>
       <span class="badge-count">24 Major Mithai Varieties Ready</span>
     </div>
   </header>
@@ -144,9 +155,10 @@
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('gallery');
-        data.sweets.forEach(sweet => {
+        data.sweets.forEach((sweet, index) => {
           const card = document.createElement('div');
           card.className = 'card';
+          card.style.animationDelay = `${Math.min(index * 20, 240)}ms`;
           card.innerHTML = `
             <div class="img-wrap">
               <img src="${sweet.image_file}" alt="${sweet.name}" loading="lazy">

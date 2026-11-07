@@ -39,13 +39,25 @@ Every sweet in the billing catalog comes pre-attached with high-resolution photo
 ## ⚡ Features
 
 - **Dedicated POS Counter (`index.html`)**: Lightning-fast sales calculations, single-tap editable quantity box (`5` or `12` kg), 4 quick weight buttons (`+500g`, `−500g`, `+250g`, `−250g`), real-time reverse cash calculation, and multi-item cart.
+- **Strict Online Cloud Sales (No Local Storage)**: Sales transactions are recorded, synchronized, and fetched exclusively from the online cloud database via `sales-cloud.js`. No sales data is retained in `localStorage` or `IndexedDB`, guaranteeing multi-counter consistency and zero data loss on browser cache purges.
+- **Dedicated Sales History & Cloud Ledger (`sales-history.html`)**:
+  - **Live Cloud Analytics**: Today's revenue, filtered total revenue, total orders count, average order value (AOV), and total sold sweet weight.
+  - **Smart Date Filtering**: 1-click presets for Today, Yesterday, Last 7 Days, This Month, All Time, or Custom Date Ranges.
+  - **Search & Payment Filters**: Search by sweet name or order ID, filter by Cash or UPI payment methods.
+  - **Top Sellers Breakdown**: Real-time ranking of top selling sweets by weight and revenue with visual progress bars.
+  - **Printable Thermal Receipts**: Formatted counter receipts ready for 58mm/80mm or standard A4 printers.
+  - **CSV Export & Daily Reconciliation**: 1-click export of sales records to CSV for accounting and bookkeeping.
+  - **Online Void / Deletion**: Void accidental orders directly from the cloud database.
+- **Flexible Backend & Node REST Server (`server.js`)**:
+  - Run locally or deploy anywhere with zero npm dependencies using `node server.js`.
+  - Built-in REST endpoints: `GET /api/sales`, `POST /api/sales`, `DELETE /api/sales/:id`, `GET /api/health`.
+  - Also integrates with default cloud REST database, Supabase REST API, or Firebase Realtime Database.
 - **Separate Menu Management Page (`manage.html`)**:
   - **1-Tap Hide / Restore**: Hide sweets when out of stock or restore them to the counter with a single tap.
-  - **✏️ Change Price / Photo**: Change sweet name, price, unit, category, or replace photo with real-time in-browser WebP compression.
-  - **＋ Add New Sweets**: Add custom sweets to your counter anytime with your own photos.
-  - **Dual Storage Persistence**: All edits, prices, and hidden flags sync live between both pages via `localStorage` and `IndexedDB`.
+  - **📸 Live Camera & Photo Upload**: Capture fresh product photos directly using device camera/webcam or upload from gallery, with live viewfinder framing guide, camera flip, and automatic in-browser WebP compression.
+  - **✏️ Change Price / Photo**: Change sweet name, price, unit, category, or replace photo with instant 1-tap live preview.
+  - **＋ Add New Sweets**: Add custom sweets to your counter anytime with live camera photos or uploads.
 - **Pre-filled High-Res Photography**: All 34 major sweets come pre-filled with real photography out of the box.
-- **Daily Sales Ledger**: Track today's revenue, order timestamps, and item breakdown without server overhead.
 - **Asset Showcase Gallery**: Visit [`gallery.html`](gallery.html) for a complete visual catalog of all mithai varieties.
 
 ---
@@ -55,11 +67,26 @@ Every sweet in the billing catalog comes pre-attached with high-resolution photo
 ```
 sweet_shop/
 ├── index.html                           # Fast POS billing counter application
+├── sales-history.html                   # Dedicated Sales History & Cloud Ledger page
+├── sales-cloud.js                       # Online cloud sales service & adapter
+├── server.js                            # Zero-dependency Node.js REST server & static host
 ├── manage.html                          # Dedicated sweet management, prices & photos page
 ├── Mithai Counter — Quick Billing.html  # Synchronized billing application
 ├── gallery.html                         # Full-page visual sweets gallery
+├── package.json                         # Node start/dev scripts
 ├── assets/                              # 24 High-resolution sweet images
 ├── sweets_catalog.json                  # Metadata catalog
-```
 └── README.md                            # Documentation & photo preview
 ```
+
+## 🚀 Running the App
+
+### Option 1: Direct in Browser (Static / GitHub Pages)
+Double-click `index.html` or visit [https://gitansh6126.github.io/sweet-shop/](https://gitansh6126.github.io/sweet-shop/). The app automatically connects to the online Cloud REST ledger to record and load sales!
+
+### Option 2: Local Node.js REST Server
+```bash
+npm start
+# or: node server.js
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser. All sales will be recorded to your local backend server and synced across devices on your local network.
