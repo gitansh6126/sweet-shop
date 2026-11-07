@@ -1,6 +1,6 @@
 {
   "shop_name": "Royal Mithai Sweet Shop",
-  "total_items": 24,
+  "total_items": 32,
   "sweets": [
     {
       "id": "gulab_jamun",
@@ -36,7 +36,7 @@
       "description": "Diamond-shaped rich fudge made of finely ground cashews, sugar, and edible silver foil.",
       "query": "Kaju_katli",
       "image_file": "assets/kaju_katli.jpg",
-      "size_kb": 352.0
+      "size_kb": 352
     },
     {
       "id": "motichoor_laddu",
@@ -118,7 +118,7 @@
       "description": "Oval-shaped juicy chhena sweet coated with mawa or desiccated coconut flakes.",
       "query": "Chomchom",
       "image_file": "assets/cham_cham.jpg",
-      "size_kb": 322.0
+      "size_kb": 322
     },
     {
       "id": "gujiya",
@@ -164,7 +164,7 @@
       "description": "Velvety dessert made with strained hung curd, saffron, cardamom, and nuts.",
       "query": "Shrikhand",
       "image_file": "assets/shrikhand.jpg",
-      "size_kb": 1039.0
+      "size_kb": 1039
     },
     {
       "id": "ghevar",
@@ -191,7 +191,7 @@
       "description": "Sacred dumpling with sweet coconut and jaggery filling wrapped in soft rice flour dough.",
       "query": "Modak",
       "image_file": "assets/modak.jpg",
-      "size_kb": 276.0
+      "size_kb": 276
     },
     {
       "id": "balushahi",
@@ -220,6 +220,78 @@
       "query": "Kheer",
       "image_file": "assets/kheer.jpg",
       "size_kb": 136.9
+    },
+    {
+      "id": "samosa",
+      "name": "Samosa",
+      "category": "Namkeen",
+      "description": "Crispy golden triangular pastry stuffed with spiced potato, green peas, and aromatic spices.",
+      "query": "Samosa",
+      "image_file": "assets/samosa.jpg",
+      "size_kb": 80.8
+    },
+    {
+      "id": "kachori",
+      "name": "Khasta Kachori",
+      "category": "Namkeen",
+      "description": "Flaky, hollow deep-fried pastry filled with spiced yellow moong dal and hing masala.",
+      "query": "Kachori",
+      "image_file": "assets/kachori.jpg",
+      "size_kb": 67.7
+    },
+    {
+      "id": "dhokla",
+      "name": "Khaman Dhokla",
+      "category": "Namkeen",
+      "description": "Soft, fluffy steamed savory cake made from fermented gram flour, tempered with mustard seeds and curry leaves.",
+      "query": "Dhokla",
+      "image_file": "assets/dhokla.jpg",
+      "size_kb": 35.7
+    },
+    {
+      "id": "bhujia",
+      "name": "Bikaneri Bhujia",
+      "category": "Namkeen",
+      "description": "Iconic crisp gram and moth bean flour noodles seasoned with black pepper, cloves, and Indian spices.",
+      "query": "Bikaneri_bhujia",
+      "image_file": "assets/bhujia.jpg",
+      "size_kb": 61.6
+    },
+    {
+      "id": "sev",
+      "name": "Ratlami Sev",
+      "category": "Namkeen",
+      "description": "Crunchy deep-fried spiced besan noodles flavored with distinct hints of clove, black pepper, and ajwain.",
+      "query": "Sev",
+      "image_file": "assets/sev.jpg",
+      "size_kb": 173.8
+    },
+    {
+      "id": "mathri",
+      "name": "Khasta Mathri",
+      "category": "Namkeen",
+      "description": "Traditional savory flaky crackers made with flour, pure ghee, ajwain, and cracked black pepper.",
+      "query": "Mathri",
+      "image_file": "assets/mathri.jpg",
+      "size_kb": 41.9
+    },
+    {
+      "id": "matka_kulfi",
+      "name": "Matka Kulfi",
+      "category": "Extra Products",
+      "description": "Rich traditional frozen dessert slow-simmered with reduced milk, saffron, cardamom, and served in earthen pot.",
+      "query": "Kulfi",
+      "image_file": "assets/matka_kulfi.jpg",
+      "size_kb": 60.4
+    },
+    {
+      "id": "thandai",
+      "name": "Kesar Badam Thandai Bottle",
+      "category": "Extra Products",
+      "description": "Refreshing traditional chilled milk drink infused with crushed almonds, pistachios, saffron, and cooling spices.",
+      "query": "Thandai",
+      "image_file": "assets/thandai.jpg",
+      "size_kb": 90.6
     }
   ]
 }

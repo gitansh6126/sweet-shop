@@ -162,26 +162,26 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
   <div class="brand">
     <div class="logo">⚙️</div>
     <div>
-      <h1>Sweet Menu Management</h1>
-      <div class="sub">Change prices, update photos, hide or add sweets</div>
+      <h1>Sweet & Namkeen Menu Management</h1>
+      <div class="sub">Change prices, update photos, hide or add sweets, namkeen & extra items</div>
     </div>
   </div>
   <div class="top-actions">
     <a href="index.html" class="btn primary">← Back to Billing</a>
     <a href="sales-history.html" class="btn ghost">📊 Sale History</a>
     <button class="ghost" id="backupBtn">💾 Data Backup</button>
-    <button class="btn-accent" id="addProductBtn">＋ Add new sweet</button>
+    <button class="btn-accent" id="addProductBtn">＋ Add new item</button>
   </div>
 </header>
 
 <!-- Status Summary -->
 <div class="stats-bar">
   <div class="stat-box">
-    <div class="num" id="statTotal">34</div>
-    <div class="lbl">Total Sweets</div>
+    <div class="num" id="statTotal">50</div>
+    <div class="lbl">Total Items</div>
   </div>
   <div class="stat-box">
-    <div class="num" id="statActive" style="color:var(--green)">34</div>
+    <div class="num" id="statActive" style="color:var(--green)">50</div>
     <div class="lbl">Active on Menu</div>
   </div>
   <div class="stat-box">
@@ -192,12 +192,12 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
 
 <!-- Search Input -->
 <div class="search">
-  <input id="search" placeholder="Search sweets to edit price, photo or hide/restore…" autocomplete="off">
+  <input id="search" placeholder="Search sweets, namkeen or extra products to edit price, photo or hide/restore…" autocomplete="off">
 </div>
 
 <!-- Status Tabs Filter -->
 <div class="filters" id="statusFilters">
-  <button class="pill active-tab" data-status="all">All Sweets</button>
+  <button class="pill active-tab" data-status="all">All Items</button>
   <button class="pill" data-status="active">🟢 Active Only</button>
   <button class="pill" data-status="hidden">⚪ Hidden Only</button>
 </div>
@@ -389,7 +389,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gr
 
 <div class="backup-card">
   <div style="font-weight:700;color:var(--ink)">🔄 Restore Original Prefilled Sweets</div>
-  <div style="font-size:12px;color:var(--muted)">Restores all 34 prefilled sweets and photos back to factory defaults.</div>
+  <div style="font-size:12px;color:var(--muted)">Restores all 50 prefilled sweets, namkeen, and extra products back to factory defaults.</div>
   <button class="ghost" id="resetToDefaultsBtn" style="margin-top:6px;color:#a44">Reset to Original Defaults</button>
 </div>
 </div></div>
@@ -430,9 +430,9 @@ function mirrorToIndexedDB() {
   } catch (err) {}
 }
 
-const BG = {'Dry Fruit & Kaju':'#f3e6c8','Milk & Khoya':'#f7ecdd','Bengali Sweets':'#fbe9ec','Fried & Syrup':'#fde6cc','Traditional':'#efe8d8'};
+const BG = {'Dry Fruit & Kaju':'#f3e6c8','Milk & Khoya':'#f7ecdd','Bengali Sweets':'#fbe9ec','Fried & Syrup':'#fde6cc','Traditional':'#efe8d8','Namkeen':'#fef3c7','Extra Products':'#e0f2fe','Extra Product':'#e0f2fe'};
 
-/* 34 PREFILLED SWEETS */
+/* 50 PREFILLED SWEETS, NAMKEEN & EXTRA PRODUCTS */
 const PREFILLED_SWEETS = [
  { id: 1, name: 'Kaju Katli', price: 800, unit: 'kg', category: 'Dry Fruit & Kaju', image: 'assets/kaju_katli.jpg', emoji: '🍬', hidden: false },
  { id: 2, name: 'Kaju Roll', price: 900, unit: 'kg', category: 'Dry Fruit & Kaju', image: 'assets/kaju_katli.jpg', emoji: '🍬', hidden: false },
@@ -467,10 +467,26 @@ const PREFILLED_SWEETS = [
  { id: 31, name: 'Rabri', price: 460, unit: 'kg', category: 'Milk & Khoya', image: 'assets/rabri.jpg', emoji: '🍬', hidden: false },
  { id: 32, name: 'Shrikhand', price: 420, unit: 'kg', category: 'Milk & Khoya', image: 'assets/shrikhand.jpg', emoji: '🍬', hidden: false },
  { id: 33, name: 'Basundi', price: 440, unit: 'kg', category: 'Milk & Khoya', image: 'assets/basundi.jpg', emoji: '🍬', hidden: false },
- { id: 34, name: 'Rice Kheer', price: 320, unit: 'kg', category: 'Milk & Khoya', image: 'assets/kheer.jpg', emoji: '🍬', hidden: false }
+ { id: 34, name: 'Rice Kheer', price: 320, unit: 'kg', category: 'Milk & Khoya', image: 'assets/kheer.jpg', emoji: '🍬', hidden: false },
+ { id: 35, name: 'Samosa', price: 20, unit: 'piece', category: 'Namkeen', image: 'assets/samosa.jpg', emoji: '🥟', hidden: false },
+ { id: 36, name: 'Khasta Kachori', price: 25, unit: 'piece', category: 'Namkeen', image: 'assets/kachori.jpg', emoji: '🥟', hidden: false },
+ { id: 37, name: 'Khaman Dhokla', price: 240, unit: 'kg', category: 'Namkeen', image: 'assets/dhokla.jpg', emoji: '🍰', hidden: false },
+ { id: 38, name: 'Bikaneri Bhujia', price: 320, unit: 'kg', category: 'Namkeen', image: 'assets/bhujia.jpg', emoji: '🥨', hidden: false },
+ { id: 39, name: 'Ratlami Sev', price: 300, unit: 'kg', category: 'Namkeen', image: 'assets/sev.jpg', emoji: '🥨', hidden: false },
+ { id: 40, name: 'Khasta Mathri', price: 280, unit: 'kg', category: 'Namkeen', image: 'assets/mathri.jpg', emoji: '🍘', hidden: false },
+ { id: 41, name: 'Aloo Bhujia', price: 320, unit: 'kg', category: 'Namkeen', image: 'assets/bhujia.jpg', emoji: '🥨', hidden: false },
+ { id: 42, name: 'Khatta Meetha Mixture', price: 300, unit: 'kg', category: 'Namkeen', image: 'assets/sev.jpg', emoji: '🥨', hidden: false },
+ { id: 43, name: 'Salted Roasted Kaju', price: 1100, unit: 'kg', category: 'Namkeen', image: 'assets/kaju_katli.jpg', emoji: '🥜', hidden: false },
+ { id: 44, name: 'Matka Kulfi', price: 60, unit: 'piece', category: 'Extra Products', image: 'assets/matka_kulfi.jpg', emoji: '🍨', hidden: false },
+ { id: 45, name: 'Kesar Badam Thandai Bottle', price: 55, unit: 'piece', category: 'Extra Products', image: 'assets/thandai.jpg', emoji: '🥛', hidden: false },
+ { id: 46, name: 'Rasgulla Tin (1 kg pack)', price: 220, unit: 'piece', category: 'Extra Products', image: 'assets/rasgulla.jpg', emoji: '🥫', hidden: false },
+ { id: 47, name: 'Gulab Jamun Tin (1 kg pack)', price: 240, unit: 'piece', category: 'Extra Products', image: 'assets/gulab_jamun.jpg', emoji: '🥫', hidden: false },
+ { id: 48, name: 'Fancy Sweet Gift Box', price: 50, unit: 'piece', category: 'Extra Products', image: 'assets/barfi.jpg', emoji: '🎁', hidden: false },
+ { id: 49, name: 'Royal Dry Fruit Gift Hamper', price: 850, unit: 'piece', category: 'Extra Products', image: 'assets/kaju_katli.jpg', emoji: '🎀', hidden: false },
+ { id: 50, name: 'Soan Papdi Box (500g)', price: 160, unit: 'piece', category: 'Extra Products', image: 'assets/soan_papdi.jpg', emoji: '📦', hidden: false }
 ];
 
-const categoryNames = ['All categories', 'Dry Fruit & Kaju', 'Milk & Khoya', 'Bengali Sweets', 'Fried & Syrup', 'Traditional'];
+const categoryNames = ['All categories', 'Dry Fruit & Kaju', 'Milk & Khoya', 'Bengali Sweets', 'Fried & Syrup', 'Traditional', 'Namkeen', 'Extra Products'];
 
 let deletedIds = new Set(JSON.parse(ls.get('mithai_deleted_ids') || '[]'));
 let products = [];
@@ -790,7 +806,9 @@ function renderStats() {
 }
 
 function renderCategories() {
-  $('categoryFilters').innerHTML = categoryNames.map(c => `
+  const customCats = Array.from(new Set(products.map(p => p.category).filter(c => c && !categoryNames.includes(c))));
+  const allCats = [...categoryNames, ...customCats];
+  $('categoryFilters').innerHTML = allCats.map(c => `
     <button class="pill ${c === categoryFilter ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</button>
   `).join('');
 
@@ -823,14 +841,20 @@ function renderProducts() {
   let list = products.filter(p => {
     if (statusFilter === 'active' && p.hidden) return false;
     if (statusFilter === 'hidden' && !p.hidden) return false;
-    if (categoryFilter !== 'All categories' && p.category !== categoryFilter) return false;
+    if (categoryFilter !== 'All categories') {
+      const pCat = p.category || 'Traditional';
+      const isMatch = (pCat === categoryFilter) ||
+        (categoryFilter === 'Extra Products' && (pCat === 'Extra Product' || pCat === 'Extra')) ||
+        (categoryFilter === 'Namkeen' && (pCat === 'Namkeens' || pCat === 'Snacks'));
+      if (!isMatch) return false;
+    }
     if (q && !p.name.toLowerCase().includes(q) && !(p.category || '').toLowerCase().includes(q)) return false;
     return true;
   });
 
   const grid = $('productsGrid');
   if (!list.length) {
-    grid.innerHTML = '<div class="empty">No sweets found matching your filter or search.</div>';
+    grid.innerHTML = '<div class="empty">No items found matching your filter or search.</div>';
     return;
   }
 
@@ -941,7 +965,9 @@ function openEditModal(sweet) {
   $('editSweetPrice').value = sweet.price;
   $('editSweetUnit').value = sweet.unit || 'kg';
 
-  $('editSweetCategory').innerHTML = categoryNames.filter(c => c !== 'All categories').map(c => 
+  const customCats = Array.from(new Set(products.map(p => p.category).filter(c => c && !categoryNames.includes(c))));
+  const optionsCats = [...categoryNames.filter(c => c !== 'All categories'), ...customCats];
+  $('editSweetCategory').innerHTML = optionsCats.map(c => 
     `<option value="${esc(c)}" ${sweet.category === c ? 'selected' : ''}>${esc(c)}</option>`
   ).join('');
 
@@ -1056,7 +1082,9 @@ $('deleteSweetBtn').onclick = () => {
 let addTargetImgUrl = '';
 
 $('addProductBtn').onclick = () => {
-  $('newCategory').innerHTML = categoryNames.filter(c => c !== 'All categories').map(c => `<option>${esc(c)}</option>`).join('');
+  const customCats = Array.from(new Set(products.map(p => p.category).filter(c => c && !categoryNames.includes(c))));
+  const optionsCats = [...categoryNames.filter(c => c !== 'All categories'), ...customCats];
+  $('newCategory').innerHTML = optionsCats.map(c => `<option>${esc(c)}</option>`).join('');
   $('addForm').reset();
   addTargetImgUrl = '';
   $('addPreviewCard').style.display = 'none';

@@ -6,7 +6,7 @@ A modern, touch-friendly POS billing and asset management web application for an
 
 ---
 
-## 📸 Attached Sweet Assets (24 Major Mithais)
+## 📸 Attached Sweet & Namkeen Assets (32 Major Varieties)
 
 Every sweet in the billing catalog comes pre-attached with high-resolution photography:
 
@@ -34,11 +34,19 @@ Every sweet in the billing catalog comes pre-attached with high-resolution photo
 | :---: | :---: | :---: | :---: |
 | <img src="assets/balushahi.jpg" width="160" height="120" alt="Balushahi" style="object-fit:cover;border-radius:10px"> | <img src="assets/basundi.jpg" width="160" height="120" alt="Basundi" style="object-fit:cover;border-radius:10px"> | <img src="assets/kheer.jpg" width="160" height="120" alt="Rice Kheer" style="object-fit:cover;border-radius:10px"> | <img src="assets/soan_papdi.jpg" width="160" height="120" alt="Soan Papdi" style="object-fit:cover;border-radius:10px"> |
 
+| Samosa | Khasta Kachori | Khaman Dhokla | Bikaneri Bhujia |
+| :---: | :---: | :---: | :---: |
+| <img src="assets/samosa.jpg" width="160" height="120" alt="Samosa" style="object-fit:cover;border-radius:10px"> | <img src="assets/kachori.jpg" width="160" height="120" alt="Kachori" style="object-fit:cover;border-radius:10px"> | <img src="assets/dhokla.jpg" width="160" height="120" alt="Dhokla" style="object-fit:cover;border-radius:10px"> | <img src="assets/bhujia.jpg" width="160" height="120" alt="Bhujia" style="object-fit:cover;border-radius:10px"> |
+
+| Ratlami Sev | Khasta Mathri | Matka Kulfi | Kesar Badam Thandai |
+| :---: | :---: | :---: | :---: |
+| <img src="assets/sev.jpg" width="160" height="120" alt="Ratlami Sev" style="object-fit:cover;border-radius:10px"> | <img src="assets/mathri.jpg" width="160" height="120" alt="Mathri" style="object-fit:cover;border-radius:10px"> | <img src="assets/matka_kulfi.jpg" width="160" height="120" alt="Matka Kulfi" style="object-fit:cover;border-radius:10px"> | <img src="assets/thandai.jpg" width="160" height="120" alt="Thandai" style="object-fit:cover;border-radius:10px"> |
+
 ---
 
 ## ⚡ Features
 
-- **Dedicated POS Counter (`index.html`)**: Lightning-fast sales calculations, single-tap editable quantity box (`5` or `12` kg), 4 quick weight buttons (`+500g`, `−500g`, `+250g`, `−250g`), real-time reverse cash calculation, and multi-item cart.
+- **Dedicated POS Counter (`index.html`)**: Lightning-fast sales calculations, single-tap editable quantity box (`5` or `12` kg), 4 quick weight buttons (`+500g`, `−500g`, `+250g`, `−250g`), real-time reverse cash calculation, multi-item cart, and category tabs including **Namkeen** and **Extra Products**.
 - **Strict Online Cloud Sales (No Local Storage)**: Sales transactions are recorded, synchronized, and fetched exclusively from the online cloud database via `sales-cloud.js`. No sales data is retained in `localStorage` or `IndexedDB`, guaranteeing multi-counter consistency and zero data loss on browser cache purges.
 - **Dedicated Sales History & Cloud Ledger (`sales-history.html`)**:
   - **Live Cloud Analytics**: Today's revenue, filtered total revenue, total orders count, average order value (AOV), and total sold sweet weight.
@@ -53,12 +61,12 @@ Every sweet in the billing catalog comes pre-attached with high-resolution photo
   - Built-in REST endpoints: `GET /api/sales`, `POST /api/sales`, `DELETE /api/sales/:id`, `GET /api/health`.
   - Also integrates with default cloud REST database, Supabase REST API, or Firebase Realtime Database.
 - **Separate Menu Management Page (`manage.html`)**:
-  - **1-Tap Hide / Restore**: Hide sweets when out of stock or restore them to the counter with a single tap.
+  - **1-Tap Hide / Restore**: Hide sweets or namkeen when out of stock or restore them to the counter with a single tap.
   - **📸 Live Camera & Photo Upload**: Capture fresh product photos directly using device camera/webcam or upload from gallery, with live viewfinder framing guide, camera flip, and automatic in-browser WebP compression.
-  - **✏️ Change Price / Photo**: Change sweet name, price, unit, category, or replace photo with instant 1-tap live preview.
-  - **＋ Add New Sweets**: Add custom sweets to your counter anytime with live camera photos or uploads.
-- **Pre-filled High-Res Photography**: All 34 major sweets come pre-filled with real photography out of the box.
-- **Asset Showcase Gallery**: Visit [`gallery.html`](gallery.html) for a complete visual catalog of all mithai varieties.
+  - **✏️ Change Price / Photo**: Change sweet name, price, unit, category (with Namkeen and Extra Products), or replace photo with instant 1-tap live preview.
+  - **＋ Add New Items**: Add custom sweets, namkeen, or extra products to your counter anytime with live camera photos or uploads.
+- **Pre-filled High-Res Photography**: 50 major sweets, namkeen, and extra items come pre-filled with real photography out of the box.
+- **Asset Showcase Gallery**: Visit [`gallery.html`](gallery.html) for a complete visual catalog of all mithai & namkeen varieties.
 
 ---
 
