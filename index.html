@@ -266,7 +266,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 
 <div class="backup-card">
   <div style="font-weight:700;color:var(--ink)">🔄 Restore Original Prefilled Sweets</div>
-  <div style="font-size:12px;color:var(--muted)">Restores all 34 prefilled sweets and photos back to factory defaults.</div>
+  <div style="font-size:12px;color:var(--muted)">Restores all 50 prefilled sweets, namkeen, and extra products back to factory defaults.</div>
   <button class="ghost" id="resetToDefaultsBtn" style="margin-top:6px;color:#a44">Reset to Original Defaults</button>
 </div>
 </div></div>
@@ -767,19 +767,26 @@ function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<'
 function render() {
   const q = $('search').value.toLowerCase().trim();
   const visible = products.filter(p => !p.hidden);
-  const cats = ['All sweets', ...new Set(visible.map(p => p.category || 'Traditional'))];
+  const customCats = Array.from(new Set(visible.map(p => p.category).filter(c => c && !categoryNames.includes(c))));
+  const cats = [...categoryNames, ...customCats];
   
   $('categories').innerHTML = cats.map(c => `<button class="cat-chip ${activeCategory === c ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
   $('categories').querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { activeCategory = b.dataset.cat; render(); });
 
   const list = visible.filter(p => {
-    if (activeCategory !== 'All sweets' && (p.category || 'Traditional') !== activeCategory) return false;
+    if (activeCategory !== 'All sweets') {
+      const pCat = p.category || 'Traditional';
+      const isMatch = (pCat === activeCategory) ||
+        (activeCategory === 'Extra Products' && (pCat === 'Extra Product' || pCat === 'Extra')) ||
+        (activeCategory === 'Namkeen' && (pCat === 'Namkeens' || pCat === 'Snacks'));
+      if (!isMatch) return false;
+    }
     if (q && !p.name.toLowerCase().includes(q) && !(p.category || '').toLowerCase().includes(q)) return false;
     return true;
   });
 
-  $('listTitle').textContent = 'Choose sweets';
-  $('count').textContent = list.length + ' sweets available';
+  $('listTitle').textContent = activeCategory === 'All sweets' ? 'Choose sweets, namkeen & extra' : activeCategory;
+  $('count').textContent = list.length + ' items available';
 
   $('products').innerHTML = list.map((p, i) => `
     <button class="product" data-id="${p.id}" style="animation-delay:${Math.min(i * 18, 220)}ms">
@@ -792,7 +799,7 @@ function render() {
         <div class="muted">${esc(p.category || 'Traditional')}</div>
       </div>
     </button>
-  `).join('') || '<div class="empty">No sweets available in this category.<br><br><a href="manage.html" style="color:var(--green);font-weight:700;text-decoration:none">⚙️ Open Manage Sweets to add or unhide items →</a></div>';
+  `).join('') || '<div class="empty">No items available in this category.<br><br><a href="manage.html" style="color:var(--green);font-weight:700;text-decoration:none">⚙️ Open Manage Sweets to add or unhide items →</a></div>';
 
   document.querySelectorAll('.product').forEach(b => b.onclick = () => selectProduct(+b.dataset.id));
   updateCart();
