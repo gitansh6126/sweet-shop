@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sales History & Cloud Ledger — Mithai Counter</title>
+<title>Sales History — Mithai Counter</title>
 <style>
 :root {
   --bg: #f7f5f0;
@@ -13,8 +13,6 @@
   --line: #e6e2d8;
   --green: #15803d;
   --green2: #e8f5ec;
-  --accent: #b45309;
-  --accent2: #fef3c7;
   --danger: #dc2626;
   --danger-bg: #fee2e2;
   --shadow: 0 4px 14px rgba(0,0,0,0.05);
@@ -34,9 +32,9 @@ button, input, select {
 button { cursor: pointer; border: 0; }
 
 .app {
-  max-width: 1100px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 16px 18px;
+  padding: 16px 16px;
 }
 
 header {
@@ -44,7 +42,7 @@ header {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 0 20px;
+  padding: 12px 0 16px;
   border-bottom: 1px solid var(--line);
   flex-wrap: wrap;
 }
@@ -54,17 +52,16 @@ header {
   gap: 12px;
 }
 .logo {
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 14px;
   background: #f2dfc7;
   display: grid;
   place-items: center;
-  font-size: 26px;
-  box-shadow: inset 0 0 0 1px #e3cca9;
+  font-size: 24px;
 }
-h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: #1c1917; }
-.sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+h1 { font-size: 20px; font-weight: 800; }
+.sub { font-size: 13px; color: var(--muted); }
 
 .top-actions {
   display: flex;
@@ -73,268 +70,172 @@ h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: #1c1917; 
   flex-wrap: wrap;
 }
 .btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 650;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 14px;
-  border-radius: 12px;
-  font-weight: 650;
-  font-size: 13px;
   text-decoration: none;
-  transition: all .15s ease;
-  border: 1px solid transparent;
+  transition: transform .15s ease, background-color .15s ease;
 }
-.btn.primary { background: var(--green); color: #fff!important; -webkit-text-fill-color: #fff!important; }
-.btn.primary:hover { background: #126932; }
-.btn.ghost { background: #fff; border-color: var(--line); color: var(--ink); }
-.btn.ghost:hover { background: #f0ece3; }
-.btn.accent { background: var(--accent2); color: var(--accent); }
+.btn:active { transform: scale(0.96); }
+.btn.primary { background: var(--green); color: #fff; }
+.btn.ghost { background: #fff; border: 1px solid var(--line); color: var(--ink); }
+.btn.ghost:hover { background: #fbf9f5; }
+.btn-sm { padding: 6px 11px; font-size: 12px; }
 
-/* Cloud status badge */
-.cloud-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  background: #fff;
-  border: 1px solid var(--line);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.cloud-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 0 2px rgba(16,185,129,0.2);
-  display: inline-block;
-}
-.cloud-dot.offline { background: #ef4444; box-shadow: 0 0 0 2px rgba(239,68,68,0.2); }
-.cloud-dot.checking { background: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,0.2); }
-
-/* Policy Notice Banner */
-.policy-banner {
-  margin: 16px 0;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #065f46;
-  border-radius: 14px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13px;
-  line-height: 1.45;
-}
-.policy-icon { font-size: 20px; flex-shrink: 0; }
-
-/* KPI Stats Grid */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin: 18px 0;
-}
-.kpi-card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: var(--shadow);
-}
-.kpi-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.kpi-value { font-size: 26px; font-weight: 800; color: var(--ink); margin-top: 4px; }
-.kpi-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-/* Filter & Controls Toolbar */
+/* Filter & Search Bar */
 .toolbar {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 16px;
-  margin: 18px 0;
-  box-shadow: var(--shadow);
+  padding: 14px;
+  margin: 16px 0;
   display: grid;
-  gap: 14px;
+  gap: 12px;
+  box-shadow: var(--shadow);
 }
 .preset-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
   padding-bottom: 2px;
   scrollbar-width: none;
 }
 .preset-row::-webkit-scrollbar { display: none; }
 .chip {
-  padding: 7px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 650;
-  background: #f2f0eb;
-  color: var(--ink);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: #f3f0ea;
+  border: 1px solid transparent;
+  font-size: 12.5px;
+  font-weight: 600;
   white-space: nowrap;
   transition: all .15s ease;
 }
+.chip:hover { background: #eae5dc; }
 .chip.active {
   background: var(--green);
-  color: #fff!important;
-  -webkit-text-fill-color: #fff!important;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
 }
 
 .search-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  gap: 10px;
-  align-items: center;
-}
-@media (max-width: 768px) {
-  .search-row { grid-template-columns: 1fr 1fr; }
-  .search-row input { grid-column: 1 / -1; }
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .search-input {
-  width: 100%;
-  padding: 11px 14px;
+  flex: 1;
+  min-width: 200px;
+  padding: 9px 12px;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: #faf8f5;
+  border-radius: 10px;
+  background: #fff;
   outline: none;
+  font-size: 13.5px;
 }
 .search-input:focus {
   border-color: var(--green);
-  background: #fff;
 }
 .date-picker {
-  padding: 10px 12px;
+  padding: 7px 10px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 8px;
   background: #fff;
-  font-size: 13px;
+  font-size: 12.5px;
+  outline: none;
 }
 
-/* Top selling items */
-.top-sellers {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 18px;
-  box-shadow: var(--shadow);
-}
-.section-title {
-  font-size: 15px;
-  font-weight: 750;
-  color: var(--ink);
-  margin-bottom: 12px;
+/* Summary info bar */
+.summary-bar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  margin: 14px 2px 10px;
+  font-size: 13px;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 6px;
 }
-.top-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
+.summary-bar strong {
+  color: var(--ink);
+  font-size: 14px;
 }
-.top-item-card {
-  background: #fbf9f5;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 10px 12px;
+.summary-total {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--green);
 }
-.top-item-name { font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; }
-.top-item-stats { font-size: 12px; color: var(--muted); margin-top: 4px; display: flex; justify-content: space-between; }
-.top-bar-bg { height: 5px; background: #e5e0d5; border-radius: 5px; margin-top: 6px; overflow: hidden; }
-.top-bar-fill { height: 100%; background: var(--green); border-radius: 5px; }
 
-/* Sales List & Cards */
+/* Sales List */
 .sales-list {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 .sale-card {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 14px 16px;
   box-shadow: var(--shadow);
-  display: grid;
-  gap: 12px;
-  transition: transform .12s ease;
+  transition: transform .15s ease, border-color .15s ease;
 }
-.sale-card:hover { border-color: #d8d2c4; }
-
+.sale-card:hover {
+  border-color: #d1cbc0;
+}
 .sale-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 8px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #f0ede6;
+  border-bottom: 1px solid var(--line);
+  gap: 10px;
 }
-.order-id {
+.sale-id {
+  font-size: 13.5px;
+  font-weight: 750;
+  letter-spacing: 0.3px;
+}
+.sale-time {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.sale-amount {
+  font-size: 18px;
   font-weight: 800;
-  font-size: 15px;
-  color: var(--ink);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.order-time { font-size: 12px; color: var(--muted); }
-.order-amount {
-  font-size: 20px;
-  font-weight: 850;
   color: var(--green);
+  text-align: right;
 }
-.payment-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  background: #f2f0eb;
-  color: var(--ink);
-  margin-left: 6px;
-}
-.payment-badge.upi { background: #e0e7ff; color: #3730a3; }
-.payment-badge.cash { background: #ecfdf5; color: #065f46; }
 
-.sale-items-box {
-  background: #faf8f5;
-  border-radius: 12px;
-  padding: 10px 14px;
+.sale-items-table {
   display: grid;
-  gap: 8px;
+  gap: 6px;
+  padding: 10px 0;
 }
 .sale-item-line {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   font-size: 13px;
 }
-.sale-item-name { font-weight: 650; }
-.sale-item-qty { color: var(--muted); margin-left: 6px; font-size: 12px; }
-.sale-item-price { font-weight: 700; }
+.sale-item-qty {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 4px;
+}
 
 .sale-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 4px;
-}
-.sale-actions {
-  display: flex;
+  justify-content: flex-end;
   gap: 8px;
-}
-.btn-sm {
-  padding: 6px 12px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 650;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
 }
 .btn-delete {
-  background: var(--danger-bg);
+  background: #fdf2f2;
   color: var(--danger);
   border: 1px solid #fecaca;
 }
@@ -342,65 +243,65 @@ h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: #1c1917; 
 
 /* Empty state */
 .empty-state {
-  text-align: center;
-  padding: 60px 20px;
   background: var(--card);
-  border: 1px dashed #d5cebf;
-  border-radius: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
   color: var(--muted);
 }
-.empty-state .icon { font-size: 40px; margin-bottom: 10px; }
 
 /* Toast */
 .toast {
   position: fixed;
-  top: 18px;
+  bottom: 24px;
   left: 50%;
-  transform: translate(-50%, -20px);
-  background: #1c1917;
+  transform: translateX(-50%) translateY(70px);
+  background: #1f1d1a;
   color: #fff;
-  padding: 10px 20px;
-  border-radius: 30px;
-  opacity: 0;
-  transition: all .2s ease;
-  z-index: 50;
-  pointer-events: none;
-  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 9999px;
   font-size: 13px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  opacity: 0;
+  transition: all .25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1000;
+  pointer-events: none;
 }
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
-/* Overlays / Modals - Fluid Motion & Spring System */
+/* Modal Overlay & Gestures */
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(23, 20, 15, 0.55);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity .3s cubic-bezier(.16,1,.3,1), visibility .3s cubic-bezier(.16,1,.3,1);
   z-index: 100;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .3s ease, visibility .3s ease;
 }
 .overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
-.overlay.closing { opacity: 0 !important; visibility: visible !important; pointer-events: none !important; transition: opacity .28s cubic-bezier(.32,.72,0,1) !important; }
+.overlay.closing { opacity: 0 !important; visibility: visible !important; pointer-events: none !important; transition: opacity .28s ease !important; }
 
 .modal-box {
   background: #fff;
-  border-radius: 26px 26px 0 0;
-  padding: 8px 22px calc(24px + env(safe-area-inset-bottom));
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
+  border-radius: 24px 24px 0 0;
+  padding: 10px 18px calc(24px + env(safe-area-inset-bottom));
   max-height: 90vh;
   overflow-y: auto;
-  overscroll-behavior-y: contain;
-  box-shadow: 0 -12px 40px rgba(0,0,0,0.18), 0 -2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 -12px 40px rgba(0,0,0,0.18);
   transform: translateY(105%);
   transition: transform .36s cubic-bezier(.22,1,.36,1);
   will-change: transform;
@@ -412,8 +313,7 @@ h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: #1c1917; 
 @media(min-width: 640px) {
   .overlay { align-items: center; padding: 20px; }
   .modal-box {
-    border-radius: 26px;
-    box-shadow: 0 25px 65px rgba(0,0,0,.22), 0 6px 18px rgba(0,0,0,.08);
+    border-radius: 24px;
     transform: translateY(45px) scale(.96);
     transition: transform .32s cubic-bezier(.22,1,.36,1), opacity .32s ease;
   }
@@ -421,51 +321,65 @@ h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: #1c1917; 
   .overlay.closing .modal-box { transform: translateY(100vh) !important; }
 }
 
-.handle-wrap{padding:8px 0 14px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
-.handle-wrap:active{cursor:grabbing}
-.modal-head{touch-action:none}
-.handle{height:5px;width:44px;border-radius:6px;background:#d8d3c7;transition:width .2s cubic-bezier(.34,1.56,.64,1),background-color .2s ease,transform .2s ease}
-.handle-wrap:hover .handle,.modal-box.dragging .handle{width:56px;background:var(--green);transform:scaleY(1.15)}
-.handle-cue{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-top:5px;opacity:0;transform:translateY(-3px);transition:opacity .2s ease,transform .2s ease;pointer-events:none}
-.handle-wrap:hover .handle-cue,.modal-box.dragging .handle-cue{opacity:.85;transform:translateY(0)}
-
+.handle-wrap {
+  padding: 6px 0 12px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: grab;
+  touch-action: none;
+}
+.handle {
+  height: 5px;
+  width: 44px;
+  border-radius: 6px;
+  background: #d8d3c7;
+}
+.handle-cue {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.handle-wrap:hover .handle-cue, .modal-box.dragging .handle-cue { opacity: 0.85; }
 .modal-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  touch-action: none;
 }
 .close-modal {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #f2f0eb;
-  font-size: 20px;
+  font-size: 18px;
   display: grid;
   place-items: center;
-  line-height: 1;
   border: 0;
   cursor: pointer;
-  transition: transform .22s cubic-bezier(.34,1.56,.64,1), background-color .2s ease;
 }
-.close-modal:hover { background: #e2ded4; transform: rotate(90deg) scale(1.08); }
-.close-modal:active { transform: rotate(90deg) scale(.92); }
 
-/* Printable thermal receipt styling */
+/* Printable Receipt */
 .receipt-paper {
   background: #fff;
   border: 1px dashed #bbb;
-  padding: 20px;
+  padding: 18px;
   font-family: 'Courier New', Courier, monospace;
   font-size: 13px;
   line-height: 1.4;
   color: #000;
   border-radius: 8px;
-  margin: 12px 0;
+  margin: 10px 0;
 }
-.receipt-paper h2 { text-align: center; font-size: 18px; font-weight: 900; margin-bottom: 4px; }
+.receipt-paper h2 { text-align: center; font-size: 17px; font-weight: 800; margin-bottom: 4px; }
 .receipt-paper .center { text-align: center; }
-.receipt-paper .divider { border-bottom: 1px dashed #777; margin: 10px 0; }
+.receipt-paper .divider { border-bottom: 1px dashed #777; margin: 8px 0; }
 .receipt-paper .row { display: flex; justify-content: space-between; }
 .receipt-paper .bold { font-weight: bold; }
 
@@ -492,52 +406,16 @@ h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: #1c1917; 
     <div class="brand">
       <div class="logo">🍬</div>
       <div>
-        <h1>Sales History & Cloud Ledger</h1>
-        <div class="sub">Live online sales register · Zero local storage retention</div>
+        <h1>Sales History</h1>
+        <div class="sub">Review past counter orders and receipts</div>
       </div>
     </div>
     <div class="top-actions">
-      <a href="index.html" class="btn primary">🍬 Billing Counter</a>
+      <a href="index.html" class="btn primary">💳 Billing Counter</a>
       <a href="manage.html" class="btn ghost">⚙️ Manage Sweets</a>
-      <button class="cloud-pill" id="cloudStatusBtn" title="Click to view Cloud Database Settings">
-        <span class="cloud-dot" id="cloudDot"></span>
-        <span id="cloudLabel">Cloud Online</span>
-      </button>
-      <button class="btn ghost" id="refreshBtn" title="Sync latest sales from online database">🔄 Refresh</button>
+      <button class="btn ghost" id="refreshBtn" title="Refresh sales records">🔄 Refresh</button>
     </div>
   </header>
-
-  <!-- Online Security Policy Banner -->
-  <div class="policy-banner">
-    <div class="policy-icon">☁️</div>
-    <div>
-      <strong>Strict Online Recording Policy:</strong> All counter sales are synchronized directly with your online cloud database. No sales data is stored in browser <code>localStorage</code> or local cookies, preventing data loss across devices or counter clears.
-    </div>
-  </div>
-
-  <!-- KPI Analytics Cards -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">Today's Revenue</div>
-      <div class="kpi-value" id="kpiToday" style="color:var(--green)">₹0</div>
-      <div class="kpi-sub" id="kpiTodayCount">0 orders today</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Filtered Revenue</div>
-      <div class="kpi-value" id="kpiFiltered">₹0</div>
-      <div class="kpi-sub" id="kpiFilteredCount">0 orders in period</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Average Order Value</div>
-      <div class="kpi-value" id="kpiAOV">₹0</div>
-      <div class="kpi-sub">Per transaction</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Total Mithai Sold</div>
-      <div class="kpi-value" id="kpiWeight">0 kg</div>
-      <div class="kpi-sub">Across all varieties</div>
-    </div>
-  </div>
 
   <!-- Filters & Search Toolbar -->
   <div class="toolbar">
@@ -562,38 +440,21 @@ h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: #1c1917; 
 
     <!-- Search & Export -->
     <div class="search-row">
-      <input id="searchInput" class="search-input" placeholder="Search by sweet name (e.g. kaju katli, gulab jamun) or order ID…" autocomplete="off">
-      <select id="paymentFilter" class="date-picker">
-        <option value="all">All Payments</option>
-        <option value="Cash">Cash Only</option>
-        <option value="UPI">UPI Only</option>
-      </select>
-      <button class="btn ghost" id="exportCsvBtn" title="Download spreadsheet of filtered sales">📥 Export CSV</button>
-      <button class="btn ghost" id="printLedgerBtn" title="Print daily counter sales ledger">🖨️ Print Summary</button>
+      <input id="searchInput" class="search-input" placeholder="Search sweet name or order ID...">
+      <button class="btn ghost" id="exportCsvBtn" title="Export sales to CSV">📄 Export CSV</button>
+      <button class="btn ghost" id="printLedgerBtn" title="Print sales summary">🖨️ Print</button>
     </div>
   </div>
 
-  <!-- Top Selling Mithais Widget -->
-  <div class="top-sellers" id="topSellersBox">
-    <div class="section-title">
-      <span>🏆 Top Selling Sweets (in selected period)</span>
-      <span style="font-size:12px;color:var(--muted)" id="topSellersCount"></span>
-    </div>
-    <div class="top-grid" id="topSellersGrid"></div>
+  <!-- Summary Line -->
+  <div class="summary-bar">
+    <span id="summaryText">Loading sales…</span>
+    <span class="summary-total" id="summaryTotal"></span>
   </div>
 
   <!-- Sales Transactions List -->
-  <div class="section-title" style="margin: 20px 0 10px;">
-    <span>📜 Recorded Transactions</span>
-    <span style="font-size:13px;color:var(--muted)" id="txCountBadge">Loading cloud ledger…</span>
-  </div>
-
   <div class="sales-list" id="salesContainer">
-    <div class="empty-state">
-      <div class="icon">☁️</div>
-      <h3>Connecting to Online Cloud Database…</h3>
-      <p style="margin-top:4px">Fetching authorized sales records from cloud server.</p>
-    </div>
+    <div class="empty-state">Loading sales records…</div>
   </div>
 
 </div>
@@ -603,85 +464,25 @@ h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: #1c1917; 
   <div class="modal-box">
     <div class="handle-wrap" title="Drag down or scroll down to close"><div class="handle"></div><div class="handle-cue">↓ scroll or drag down to close</div></div>
     <div class="modal-head">
-      <h3 style="font-size:18px">Counter Receipt</h3>
-      <button class="close-modal" id="closeReceiptBtn">×</button>
+      <h3 style="font-size:17px">Receipt</h3>
+      <button class="close-modal" id="closeReceiptBtn">✕</button>
     </div>
     <div id="receiptContent"></div>
-    <div style="display:flex;gap:10px;margin-top:16px">
+    <div style="display:flex;gap:10px;margin-top:14px">
       <button class="btn primary" style="flex:1" id="printReceiptBtn">🖨️ Print Receipt</button>
       <button class="btn ghost" id="closeReceiptBtn2">Close</button>
     </div>
   </div>
 </div>
 
-<!-- Cloud Settings Modal -->
-<div class="overlay" id="cloudOverlay">
-  <div class="modal-box">
-    <div class="handle-wrap" title="Drag down or scroll down to close"><div class="handle"></div><div class="handle-cue">↓ scroll or drag down to close</div></div>
-    <div class="modal-head">
-      <h3 style="font-size:18px">☁️ Cloud Database Settings</h3>
-      <button class="close-modal" id="closeCloudBtn">×</button>
-    </div>
-    
-    <div style="margin-bottom:14px;background:#f6f4ef;padding:12px;border-radius:12px;border:1px solid var(--line);font-size:13px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-        <span style="color:var(--muted)">Connection Status:</span>
-        <strong id="modalCloudStatus" style="color:var(--green)">Online</strong>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-        <span style="color:var(--muted)">Active Backend:</span>
-        <strong id="modalBackendType">Cloud REST Database</strong>
-      </div>
-      <div style="display:flex;justify-content:space-between">
-        <span style="color:var(--muted)">LocalStorage Sales:</span>
-        <strong style="color:var(--green)">0 (Purged & Disabled)</strong>
-      </div>
-    </div>
-
-    <div style="display:grid;gap:12px">
-      <div>
-        <label style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px">Database Provider</label>
-        <select id="cfgProvider" class="date-picker" style="width:100%">
-          <option value="auto">Auto-Detect (Local Server or Cloud REST)</option>
-          <option value="cloud_rest">Cloud REST Database (Zero-Config Default)</option>
-          <option value="local">Local Node Server (http://localhost:3000)</option>
-          <option value="firebase">Firebase Realtime Database</option>
-          <option value="supabase">Supabase REST API</option>
-          <option value="custom">Custom Webhook / REST API</option>
-        </select>
-      </div>
-
-      <div id="cfgCustomFields" style="display:none;display:grid;gap:10px">
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px">Server / Project URL</label>
-          <input id="cfgUrl" class="search-input" placeholder="e.g. https://your-project.supabase.co or Firebase URL">
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px">API Key / Token (if applicable)</label>
-          <input id="cfgKey" type="password" class="search-input" placeholder="Supabase Anon Key or Bearer Token">
-        </div>
-      </div>
-
-      <div style="display:flex;gap:10px;margin-top:10px">
-        <button class="btn ghost" id="testConnBtn" style="flex:1">Test Connection</button>
-        <button class="btn primary" id="saveCloudBtn" style="flex:1">Save & Apply</button>
-      </div>
-
-      <button class="btn ghost btn-sm" id="purgeLocalBtn" style="margin-top:8px;color:var(--accent)">
-        🧹 Force Clear Any Old Local Storage Remnants
-      </button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
-<!-- Include Online Cloud Sales Service -->
+<!-- Background Sales Service -->
 <script src="sales-cloud.js"></script>
 
 <script>
 /* ========================================================
-   SALES HISTORY CONTROLLER
+   SIMPLE SALES HISTORY CONTROLLER
    ======================================================== */
 const $ = id => document.getElementById(id);
 const money = n => '₹' + (Number(n) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
@@ -689,7 +490,6 @@ const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').re
 
 let allSales = [];
 let activePreset = 'today';
-let activePayment = 'all';
 let searchQuery = '';
 let customFrom = '', customTo = '';
 
@@ -700,7 +500,6 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-// Format natural weights (e.g. 500 g, 1 kg, 1 kg 250 g)
 function formatWeight(qty, unit) {
   if (unit !== 'kg') return `${qty} ${unit}`;
   const totalGrams = Math.round(Number(qty) * 1000);
@@ -711,7 +510,6 @@ function formatWeight(qty, unit) {
   return `${kg} kg ${g} g`;
 }
 
-// Preset date ranges
 function getDateRange(preset) {
   const now = new Date();
   const format = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -736,56 +534,36 @@ function getDateRange(preset) {
   if (preset === 'custom') {
     return { from: customFrom || '1970-01-01', to: customTo || '2099-12-31' };
   }
-  return { from: '1970-01-01', to: '2099-12-31' }; // all
+  return { from: '1970-01-01', to: '2099-12-31' };
 }
 
-// Fetch sales online
-async function loadSalesFromCloud() {
-  $('txCountBadge').textContent = 'Syncing from cloud…';
-  $('cloudDot').className = 'cloud-dot checking';
-  $('cloudLabel').textContent = 'Syncing…';
-
+async function loadSales() {
+  $('summaryText').textContent = 'Loading sales…';
   try {
-    SalesCloud.verifyNoLocalStorageSales();
     const sales = await SalesCloud.getSales();
     allSales = sales;
-
-    $('cloudDot').className = 'cloud-dot';
-    $('cloudLabel').textContent = 'Cloud Online';
     render();
   } catch (err) {
-    console.error('Failed to load sales online:', err);
-    $('cloudDot').className = 'cloud-dot offline';
-    $('cloudLabel').textContent = 'Cloud Error';
-    $('txCountBadge').textContent = 'Sync failed';
+    console.error('Failed to load sales:', err);
     $('salesContainer').innerHTML = `
       <div class="empty-state">
-        <div class="icon">⚠️</div>
-        <h3>Unable to reach online sales database</h3>
-        <p style="margin-top:6px;color:#a44">${esc(err.message)}</p>
-        <button class="btn primary" style="margin-top:14px" onclick="loadSalesFromCloud()">Retry Cloud Sync</button>
+        <h3>Could not load sales records</h3>
+        <p style="margin-top:6px">${esc(err.message)}</p>
+        <button class="btn primary" style="margin-top:12px" onclick="loadSales()">Retry</button>
       </div>
     `;
-    toast('Cloud sync failed: ' + err.message);
+    $('summaryText').textContent = 'Error loading records';
   }
 }
 
-// Filter and calculate
 function getFilteredSales() {
   const range = getDateRange(activePreset);
   const q = searchQuery.toLowerCase().trim();
 
   return allSales.filter(sale => {
-    // Date match
     const sDate = sale.date || (sale.timestamp ? sale.timestamp.split('T')[0] : '');
     if (sDate < range.from || sDate > range.to) return false;
 
-    // Payment method match
-    if (activePayment !== 'all' && (sale.paymentMethod || 'Cash') !== activePayment) {
-      return false;
-    }
-
-    // Search query match (item name or order ID)
     if (q) {
       const matchId = String(sale.id || '').toLowerCase().includes(q);
       const matchItems = Array.isArray(sale.items) && sale.items.some(i => (i.name || '').toLowerCase().includes(q));
@@ -797,144 +575,76 @@ function getFilteredSales() {
 }
 
 function render() {
-  const todayStr = SalesCloud.getTodayDate();
-  const todaySales = allSales.filter(s => (s.date === todayStr));
-  const todayTotal = todaySales.reduce((sum, s) => sum + (s.total || 0), 0);
-
   const filtered = getFilteredSales();
-  const filteredTotal = filtered.reduce((sum, s) => sum + (s.total || 0), 0);
-  const orderCount = filtered.length;
-  const aov = orderCount > 0 ? (filteredTotal / orderCount) : 0;
+  const totalAmount = filtered.reduce((sum, s) => sum + (s.total || 0), 0);
+  const count = filtered.length;
 
-  // Calculate total sold weight / units
-  let totalKg = 0;
-  const sweetStats = {};
+  $('summaryText').textContent = `Showing ${count} order${count === 1 ? '' : 's'}`;
+  $('summaryTotal').textContent = `Total: ${money(totalAmount)}`;
 
-  filtered.forEach(s => {
-    (s.items || []).forEach(item => {
-      const qty = Number(item.qty) || 0;
-      const amt = Number(item.amount) || 0;
-      const name = item.name || 'Mithai';
-      const unit = item.unit || 'kg';
+  const container = $('salesContainer');
 
-      if (unit === 'kg') totalKg += qty;
-
-      if (!sweetStats[name]) sweetStats[name] = { name, unit, qty: 0, amount: 0 };
-      sweetStats[name].qty += qty;
-      sweetStats[name].amount += amt;
-    });
-  });
-
-  // Update KPIs
-  $('kpiToday').textContent = money(todayTotal);
-  $('kpiTodayCount').textContent = `${todaySales.length} orders today`;
-  $('kpiFiltered').textContent = money(filteredTotal);
-  $('kpiFilteredCount').textContent = `${orderCount} orders in selected range`;
-  $('kpiAOV').textContent = money(aov);
-  $('kpiWeight').textContent = totalKg > 0 ? `${totalKg.toFixed(2)} kg` : '0 kg';
-
-  // Render Top Sellers
-  const sortedSweets = Object.values(sweetStats).sort((a, b) => b.amount - a.amount).slice(0, 4);
-  if (sortedSweets.length > 0) {
-    $('topSellersBox').style.display = 'block';
-    $('topSellersCount').textContent = `${sortedSweets.length} items`;
-    const maxAmt = sortedSweets[0].amount || 1;
-    $('topSellersGrid').innerHTML = sortedSweets.map(sw => `
-      <div class="top-item-card">
-        <div class="top-item-name">
-          <span>${esc(sw.name)}</span>
-          <span style="color:var(--green)">${money(sw.amount)}</span>
-        </div>
-        <div class="top-item-stats">
-          <span>Total sold:</span>
-          <b>${formatWeight(sw.qty, sw.unit)}</b>
-        </div>
-        <div class="top-bar-bg">
-          <div class="top-bar-fill" style="width:${Math.round((sw.amount / maxAmt) * 100)}%"></div>
-        </div>
-      </div>
-    `).join('');
-  } else {
-    $('topSellersBox').style.display = 'none';
-  }
-
-  // Render Sales List
-  $('txCountBadge').textContent = `${filtered.length} transactions`;
-
-  if (filtered.length === 0) {
-    $('salesContainer').innerHTML = `
+  if (!filtered.length) {
+    container.innerHTML = `
       <div class="empty-state">
-        <div class="icon">🧾</div>
-        <h3>No sales found for this period</h3>
-        <p style="margin-top:4px">New counter sales completed will automatically record online.</p>
+        <h3>No sales recorded</h3>
+        <p style="margin-top:4px">No orders found for the selected period.</p>
       </div>
     `;
     return;
   }
 
-  $('salesContainer').innerHTML = filtered.map((sale, idx) => {
-    const items = sale.items || [];
-    const formattedId = sale.id ? (sale.id.startsWith('sale_') ? '#ORD-' + sale.id.replace('sale_', '').slice(0, 8).toUpperCase() : '#' + sale.id) : ('#ORD-' + (idx + 1));
-    const payClass = (sale.paymentMethod || 'Cash').toLowerCase() === 'upi' ? 'upi' : 'cash';
+  container.innerHTML = filtered.map(sale => {
+    const formattedId = sale.id && sale.id.startsWith('sale_')
+      ? '#ORD-' + sale.id.replace('sale_', '').slice(0, 8).toUpperCase()
+      : (sale.id ? '#' + sale.id : '');
 
     return `
       <div class="sale-card">
         <div class="sale-header">
           <div>
-            <div class="order-id">
-              <span>${esc(formattedId)}</span>
-              <span class="payment-badge ${payClass}">${esc(sale.paymentMethod || 'Cash')}</span>
-            </div>
-            <div class="order-time">📅 ${esc(sale.date || '')} at ⏰ ${esc(sale.time || '')}</div>
+            <div class="sale-id">${esc(formattedId)}</div>
+            <div class="sale-time">${esc(sale.date || '')} ${esc(sale.time || '')}</div>
           </div>
-          <div style="text-align:right">
-            <div class="order-amount">${money(sale.total)}</div>
-            <div style="font-size:12px;color:var(--muted)">${items.length} sweet item${items.length > 1 ? 's' : ''}</div>
-          </div>
+          <div class="sale-amount">${money(sale.total)}</div>
         </div>
 
-        <div class="sale-items-box">
-          ${items.map(i => `
+        <div class="sale-items-table">
+          ${(sale.items || []).map(i => `
             <div class="sale-item-line">
               <div>
-                <span class="sale-item-name">🍬 ${esc(i.name)}</span>
-                <span class="sale-item-qty">(${formatWeight(i.qty, i.unit)} × ${money(i.rate)}/${i.unit})</span>
+                <strong>${esc(i.name)}</strong>
+                <span class="sale-item-qty">(${formatWeight(i.qty, i.unit)})</span>
               </div>
-              <span class="sale-item-price">${money(i.amount)}</span>
+              <div>${money(i.amount)}</div>
             </div>
           `).join('')}
         </div>
 
         <div class="sale-footer">
-          <div style="font-size:12px;color:var(--muted)">
-            Cloud Sync: <span style="color:var(--green)">✓ Verified Online</span>
-          </div>
-          <div class="sale-actions">
-            <button class="btn ghost btn-sm" onclick="showReceipt('${esc(sale.id)}')">🧾 Receipt</button>
-            <button class="btn btn-delete btn-sm" onclick="deleteSale('${esc(sale.id)}')">🗑️ Void Sale</button>
-          </div>
+          <button class="btn ghost btn-sm" onclick="showReceipt('${esc(sale.id)}')">🧾 Receipt</button>
+          <button class="btn btn-delete btn-sm" onclick="deleteSale('${esc(sale.id)}')">🗑️ Delete</button>
         </div>
       </div>
     `;
   }).join('');
 }
 
-// Receipt Viewer
 function showReceipt(saleId) {
   const sale = allSales.find(s => String(s.id) === String(saleId));
   if (!sale) return;
 
-  const formattedId = sale.id.startsWith('sale_') ? '#ORD-' + sale.id.replace('sale_', '').slice(0, 8).toUpperCase() : '#' + sale.id;
+  const formattedId = sale.id.startsWith('sale_')
+    ? '#ORD-' + sale.id.replace('sale_', '').slice(0, 8).toUpperCase()
+    : '#' + sale.id;
 
   $('receiptContent').innerHTML = `
     <div class="receipt-paper" id="printableReceipt">
-      <h2>🍬 ROYAL MITHAI COUNTER 🍬</h2>
-      <div class="center" style="font-size:11px;color:#555">Authentic Sweets & Pure Desi Ghee</div>
-      <div class="center" style="font-size:11px;color:#555">Cloud Order Receipt</div>
+      <h2>ROYAL MITHAI COUNTER</h2>
+      <div class="center" style="font-size:11px;color:#555">Authentic Sweets & Desi Ghee</div>
       <div class="divider"></div>
       <div class="row"><span>Order ID:</span><b>${esc(formattedId)}</b></div>
       <div class="row"><span>Date:</span><span>${esc(sale.date)} ${esc(sale.time)}</span></div>
-      <div class="row"><span>Payment:</span><span>${esc(sale.paymentMethod || 'Cash')}</span></div>
       <div class="divider"></div>
       ${(sale.items || []).map(i => `
         <div class="row">
@@ -944,44 +654,39 @@ function showReceipt(saleId) {
       `).join('')}
       <div class="divider"></div>
       <div class="row bold" style="font-size:15px">
-        <span>TOTAL PAYABLE:</span>
+        <span>TOTAL:</span>
         <span>${money(sale.total)}</span>
       </div>
       <div class="divider"></div>
-      <div class="center" style="margin-top:10px">🙏 Thank You! Visit Again! 🙏</div>
-      <div class="center" style="font-size:10px;margin-top:4px">Record verified on Online Sales Ledger</div>
+      <div class="center" style="margin-top:8px">Thank You! Visit Again!</div>
     </div>
   `;
 
   openModal('receiptOverlay');
 }
 
-// Delete sale online
 async function deleteSale(saleId) {
-  if (!confirm('Are you sure you want to void and delete this sale record from the online database?')) {
-    return;
-  }
+  if (!confirm('Delete this sale record?')) return;
   try {
-    toast('Deleting sale online…');
+    toast('Deleting…');
     await SalesCloud.deleteSale(saleId);
     allSales = allSales.filter(s => String(s.id) !== String(saleId));
     render();
-    toast('Sale deleted from cloud database');
+    toast('Sale entry deleted');
   } catch (err) {
-    alert('Failed to delete sale online: ' + err.message);
+    alert('Failed to delete sale: ' + err.message);
   }
 }
 
-// Export CSV
 function exportCSV() {
   const filtered = getFilteredSales();
   if (!filtered.length) { toast('No sales to export'); return; }
 
-  let csv = 'Order ID,Date,Time,Payment Method,Sweet Name,Quantity,Unit,Rate,Item Amount,Order Total\n';
+  let csv = 'Order ID,Date,Time,Sweet Name,Quantity,Unit,Rate,Item Amount,Order Total\n';
   filtered.forEach(s => {
     const formattedId = s.id ? (s.id.startsWith('sale_') ? 'ORD-' + s.id.replace('sale_', '').slice(0, 8).toUpperCase() : s.id) : '';
     (s.items || []).forEach(i => {
-      csv += `"${formattedId}","${s.date}","${s.time}","${s.paymentMethod || 'Cash'}","${(i.name||'').replace(/"/g,'""')}","${i.qty}","${i.unit}","${i.rate}","${i.amount}","${s.total}"\n`;
+      csv += `"${formattedId}","${s.date}","${s.time}","${(i.name||'').replace(/"/g,'""')}","${i.qty}","${i.unit}","${i.rate}","${i.amount}","${s.total}"\n`;
     });
   });
 
@@ -993,38 +698,7 @@ function exportCSV() {
   toast('Sales CSV downloaded');
 }
 
-// Print daily ledger
-function printSummary() {
-  window.print();
-}
-
-/* Event listeners */
-document.querySelectorAll('[data-preset]').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('[data-preset]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activePreset = btn.dataset.preset;
-    $('customDateRow').style.display = activePreset === 'custom' ? 'flex' : 'none';
-    render();
-  };
-});
-
-$('applyCustomDate').onclick = () => {
-  customFrom = $('dateFrom').value;
-  customTo = $('dateTo').value;
-  if (!customFrom || !customTo) { toast('Choose both from and to dates'); return; }
-  render();
-};
-
-$('searchInput').oninput = e => { searchQuery = e.target.value; render(); };
-$('paymentFilter').onchange = e => { activePayment = e.target.value; render(); };
-$('exportCsvBtn').onclick = exportCSV;
-$('printLedgerBtn').onclick = printSummary;
-$('refreshBtn').onclick = loadSalesFromCloud;
-
-/* ========================================================
-   FLUID MOTION GRAPHICS & PULL/SCROLL-TO-DISMISS ENGINE
-   ======================================================== */
+/* Modal Gesture & Dismissal Engine */
 function animateAndCloseModal(overlayEl, box, onDone) {
   if (!overlayEl || overlayEl.dataset.closing === 'true') return;
   overlayEl.dataset.closing = 'true';
@@ -1092,7 +766,6 @@ function setupModalGestures(overlayEl) {
   function startDrag(e) {
     if (e.type === 'mousedown' && e.button !== 0) return;
     if (overlayEl.dataset.closing === 'true') return;
-
     if (e.target.closest('button, input, select, textarea, a, .btn')) return;
 
     const handleWrap = e.target.closest('.handle-wrap, .handle');
@@ -1124,14 +797,12 @@ function setupModalGestures(overlayEl) {
 
       if (e.cancelable) e.preventDefault();
 
-      // Fluid 1:1 downward tracking with the hand/cursor
       const translateY = Math.max(0, dy);
       box.style.transform = `translateY(${translateY}px)`;
 
       const progress = Math.min(1, translateY / (box.offsetHeight || 420));
       overlayEl.style.backgroundColor = `rgba(23, 20, 15, ${Math.max(0.04, 0.55 * (1 - progress * 0.85))})`;
 
-      // Half-down threshold while dragging (> 45% of height): auto-close smoothly!
       const halfHeight = (box.offsetHeight || 400) * 0.45;
       if (translateY > halfHeight) {
         isDragging = false;
@@ -1156,7 +827,6 @@ function setupModalGestures(overlayEl) {
       isDragging = false;
       startY = 0;
 
-      // Half-down threshold: ~35% of box height or downward flick
       const halfDownThreshold = Math.min((box.offsetHeight || 400) * 0.35, 120);
 
       if (dy >= halfDownThreshold || (dy > 35 && velocity > 0.25)) {
@@ -1182,18 +852,9 @@ function setupModalGestures(overlayEl) {
   box.addEventListener('touchcancel', endDrag);
 
   box.addEventListener('mousedown', startDrag);
-  window.addEventListener('mousemove', e => {
-    if (startY !== 0) {
-      moveDrag(e);
-    }
-  });
-  window.addEventListener('mouseup', e => {
-    if (startY !== 0) {
-      endDrag(e);
-    }
-  });
+  window.addEventListener('mousemove', e => { if (startY !== 0) moveDrag(e); });
+  window.addEventListener('mouseup', e => { if (startY !== 0) endDrag(e); });
 
-  // Trackpad / Wheel scroll-down to close
   box.addEventListener('wheel', e => {
     if (overlayEl.dataset.closing === 'true') return;
 
@@ -1202,16 +863,12 @@ function setupModalGestures(overlayEl) {
     const atTop = box.scrollTop <= 1;
     const isContentScrollable = (box.scrollHeight - box.clientHeight) > 15;
 
-    // Scrolling down (deltaY > 0)
-    // Or trackpad swipe down at top (deltaY < -15)
     const isScrollingDown = e.deltaY > 0;
     const isTrackpadPullDown = atTop && e.deltaY < -15;
 
     if (isHandle || isHead || (!isContentScrollable && isScrollingDown) || (atTop && (isScrollingDown || isTrackpadPullDown))) {
       const delta = isTrackpadPullDown ? Math.abs(e.deltaY) : e.deltaY;
-      if (delta > 0) {
-        wheelAccumulatedY += delta * 0.75;
-      }
+      if (delta > 0) wheelAccumulatedY += delta * 0.75;
 
       if (wheelAccumulatedY > 8) {
         if (e.cancelable) e.preventDefault();
@@ -1224,7 +881,6 @@ function setupModalGestures(overlayEl) {
 
         const halfThreshold = Math.min((box.offsetHeight || 400) * 0.35, 120);
 
-        // Reached half down -> slide all the way down and close!
         if (wheelAccumulatedY >= halfThreshold) {
           wheelAccumulatedY = 0;
           clearTimeout(wheelTimer);
@@ -1232,7 +888,6 @@ function setupModalGestures(overlayEl) {
           return;
         }
 
-        // If stopped before half down, spring back smoothly
         clearTimeout(wheelTimer);
         wheelTimer = setTimeout(() => {
           if (overlayEl.dataset.closing !== 'true') {
@@ -1265,59 +920,34 @@ window.addEventListener('keydown', e => {
   }
 });
 
+/* Event Listeners */
+document.querySelectorAll('[data-preset]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('[data-preset]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activePreset = btn.dataset.preset;
+    $('customDateRow').style.display = activePreset === 'custom' ? 'flex' : 'none';
+    render();
+  };
+});
+
+$('applyCustomDate').onclick = () => {
+  customFrom = $('dateFrom').value;
+  customTo = $('dateTo').value;
+  if (!customFrom || !customTo) { toast('Choose both from and to dates'); return; }
+  render();
+};
+
+$('searchInput').oninput = e => { searchQuery = e.target.value; render(); };
+$('exportCsvBtn').onclick = exportCSV;
+$('printLedgerBtn').onclick = () => window.print();
+$('refreshBtn').onclick = loadSales;
 $('closeReceiptBtn').onclick = () => closeModal('receiptOverlay');
 $('closeReceiptBtn2').onclick = () => closeModal('receiptOverlay');
 $('printReceiptBtn').onclick = () => window.print();
 
-/* Cloud Settings Modal Controls */
-$('cloudStatusBtn').onclick = async () => {
-  const cfg = SalesCloud.getConfig();
-  $('cfgProvider').value = cfg.provider || 'auto';
-  $('cfgUrl').value = cfg.customUrl || '';
-  $('cfgKey').value = cfg.apiKey || '';
-  $('modalBackendType').textContent = cfg.activeMode === 'local_server' ? 'Local Node Server (/api/sales)' : 'Default Cloud REST Database';
-
-  $('cfgCustomFields').style.display = ['custom', 'firebase', 'supabase'].includes(cfg.provider) ? 'grid' : 'none';
-  openModal('cloudOverlay');
-};
-
-$('cfgProvider').onchange = e => {
-  $('cfgCustomFields').style.display = ['custom', 'firebase', 'supabase'].includes(e.target.value) ? 'grid' : 'none';
-};
-
-$('closeCloudBtn').onclick = () => closeModal('cloudOverlay');
-
-$('testConnBtn').onclick = async () => {
-  toast('Testing cloud connection…');
-  const res = await SalesCloud.checkConnection();
-  if (res.online) {
-    alert(`✓ Connected to Cloud Database successfully!\n\nMode: ${res.mode}\nLatency: ${res.latency}ms`);
-  } else {
-    alert(`⚠️ Connection failed: ${res.error || 'Server unreachable'}`);
-  }
-};
-
-$('saveCloudBtn').onclick = () => {
-  SalesCloud.saveConfig({
-    provider: $('cfgProvider').value,
-    customUrl: $('cfgUrl').value.trim(),
-    apiKey: $('cfgKey').value.trim()
-  });
-  closeModal('cloudOverlay');
-  toast('Cloud database configuration saved');
-  loadSalesFromCloud();
-};
-
-$('purgeLocalBtn').onclick = () => {
-  SalesCloud.verifyNoLocalStorageSales();
-  toast('Verified: 0 sales records in LocalStorage');
-};
-
-// Auto refresh on focus
-window.addEventListener('focus', loadSalesFromCloud);
-
-// Initial load
-loadSalesFromCloud();
+window.addEventListener('focus', loadSales);
+loadSales();
 </script>
 </body>
 </html>
