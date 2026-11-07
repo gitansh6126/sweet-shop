@@ -73,18 +73,19 @@ html{scroll-behavior:smooth}
 
 .sheet{background:var(--card);width:100%;max-width:540px;border-radius:26px 26px 0 0;padding:8px 18px calc(24px + env(safe-area-inset-bottom));border:1px solid var(--line);max-height:92vh;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;box-shadow:0 -12px 40px rgba(0,0,0,.18),0 -2px 10px rgba(0,0,0,.06);transform:translateY(105%);transition:transform .36s cubic-bezier(.22,1,.36,1);will-change:transform;position:relative;touch-action:pan-y}
 .overlay.open .sheet,.overlay.show .sheet{transform:translateY(0)}
-.overlay.closing .sheet{transform:translateY(105%)!important;transition:transform .28s cubic-bezier(.32,.72,0,1)!important}
+.overlay.closing .sheet{transform:translateY(100vh)!important;transition:transform .28s cubic-bezier(.32,.72,0,1)!important}
 
 @media(min-width:640px){
   .overlay{align-items:center;padding:20px}
   .sheet{border-radius:26px;max-height:88vh;box-shadow:0 25px 65px rgba(0,0,0,.22),0 6px 18px rgba(0,0,0,.08);transform:translateY(45px) scale(.96);transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .32s ease}
   .overlay.open .sheet,.overlay.show .sheet{transform:translateY(0) scale(1)}
-  .overlay.closing .sheet{transform:translateY(45px) scale(.96)!important}
+  .overlay.closing .sheet{transform:translateY(100vh)!important}
 }
 
 /* Interactive Drag / Scroll-down Handle */
 .handle-wrap{padding:8px 0 14px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
 .handle-wrap:active{cursor:grabbing}
+.modal-title{touch-action:none}
 .handle{height:5px;width:44px;border-radius:6px;background:#d8d3c7;transition:width .2s cubic-bezier(.34,1.56,.64,1),background-color .2s ease,transform .2s ease}
 .handle-wrap:hover .handle,.sheet.dragging .handle{width:56px;background:var(--green);transform:scaleY(1.15)}
 .handle-cue{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-top:5px;opacity:0;transform:translateY(-3px);transition:opacity .2s ease,transform .2s ease;pointer-events:none}
@@ -526,7 +527,7 @@ function animateAndClose(overlayEl, sheet, onDone) {
 
   if (sheet) {
     sheet.style.transition = 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1)';
-    sheet.style.transform = 'translateY(105%)';
+    sheet.style.transform = 'translateY(100vh)';
   }
 
   setTimeout(() => {
@@ -584,6 +585,8 @@ function setupSheetGestures(overlayEl) {
   let isDragging = false;
   let startTime = 0;
   let isFromHandleOrHead = false;
+  let wheelAccumulatedY = 0;
+  let wheelTimer = null;
 
   function getY(e) {
     return e.touches && e.touches.length ? e.touches[0].clientY : e.clientY;
@@ -611,12 +614,12 @@ function setupSheetGestures(overlayEl) {
 
   function moveDrag(e) {
     if (startY === 0) return;
-    const y = getY(e);
-    const dy = y - startY;
+    currentY = getY(e);
+    const dy = currentY - startY;
 
     if (!isFromHandleOrHead && sheet.scrollTop > 2) return;
 
-    if (dy > 4) {
+    if (dy > 3) {
       if (!isDragging) {
         isDragging = true;
         sheet.classList.add('dragging');
@@ -626,16 +629,23 @@ function setupSheetGestures(overlayEl) {
 
       if (e.cancelable) e.preventDefault();
 
-      let damped = dy;
-      if (dy > 110) {
-        damped = 110 + (dy - 110) * 0.65;
-      }
-      sheet.style.transform = `translateY(${Math.max(0, damped)}px)`;
+      // Fluid 1:1 downward tracking with the hand/cursor
+      const translateY = Math.max(0, dy);
+      sheet.style.transform = `translateY(${translateY}px)`;
 
-      const progress = Math.min(1, damped / (sheet.offsetHeight || 420));
-      overlayEl.style.backgroundColor = `rgba(23, 20, 15, ${Math.max(0.06, 0.55 * (1 - progress * 0.85))})`;
+      const progress = Math.min(1, translateY / (sheet.offsetHeight || 420));
+      overlayEl.style.backgroundColor = `rgba(23, 20, 15, ${Math.max(0.04, 0.55 * (1 - progress * 0.85))})`;
+
+      // Half-down threshold while dragging (> 45% of height): auto-close smoothly!
+      const halfHeight = (sheet.offsetHeight || 400) * 0.45;
+      if (translateY > halfHeight) {
+        isDragging = false;
+        startY = 0;
+        sheet.classList.remove('dragging');
+        animateAndClose(overlayEl, sheet);
+      }
     } else if (dy < 0 && isFromHandleOrHead) {
-      sheet.style.transform = `translateY(${dy * 0.25}px)`;
+      sheet.style.transform = `translateY(${dy * 0.2}px)`;
     }
   }
 
@@ -651,17 +661,20 @@ function setupSheetGestures(overlayEl) {
       isDragging = false;
       startY = 0;
 
-      if (dy > 80 || (dy > 35 && velocity > 0.35)) {
+      // Half-down threshold: ~35% of sheet height or downward flick
+      const halfDownThreshold = Math.min((sheet.offsetHeight || 400) * 0.35, 120);
+
+      if (dy >= halfDownThreshold || (dy > 35 && velocity > 0.25)) {
         animateAndClose(overlayEl, sheet);
       } else {
-        sheet.style.transition = 'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.25)';
+        sheet.style.transition = 'transform 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.25)';
         sheet.style.transform = '';
-        overlayEl.style.transition = 'background-color 0.3s ease';
+        overlayEl.style.transition = 'background-color 0.28s ease';
         overlayEl.style.backgroundColor = '';
         setTimeout(() => {
           sheet.style.transition = '';
           overlayEl.style.transition = '';
-        }, 360);
+        }, 340);
       }
     } else {
       startY = 0;
@@ -676,42 +689,73 @@ function setupSheetGestures(overlayEl) {
   sheet.addEventListener('mousedown', startDrag);
   window.addEventListener('mousemove', e => {
     if (startY !== 0) {
-      currentY = getY(e);
       moveDrag(e);
     }
   });
   window.addEventListener('mouseup', e => {
     if (startY !== 0) {
-      currentY = getY(e);
       endDrag(e);
     }
   });
 
-  let wheelSum = 0;
-  let wheelTimer = null;
+  // Trackpad / Wheel scroll-down to close
   sheet.addEventListener('wheel', e => {
+    if (overlayEl.dataset.closing === 'true') return;
+
     const isHandle = e.target.closest('.handle-wrap, .handle');
     const isHead = e.target.closest('.modal-title');
     const atTop = sheet.scrollTop <= 1;
+    const isContentScrollable = (sheet.scrollHeight - sheet.clientHeight) > 15;
 
-    if ((isHandle || isHead) && Math.abs(e.deltaY) > 15) {
-      wheelSum += Math.abs(e.deltaY);
-      if (wheelSum > 45) {
-        wheelSum = 0;
-        animateAndClose(overlayEl, sheet);
+    // Scrolling down (deltaY > 0)
+    // Or trackpad swipe down at top (deltaY < -15)
+    const isScrollingDown = e.deltaY > 0;
+    const isTrackpadPullDown = atTop && e.deltaY < -15;
+
+    if (isHandle || isHead || (!isContentScrollable && isScrollingDown) || (atTop && (isScrollingDown || isTrackpadPullDown))) {
+      const delta = isTrackpadPullDown ? Math.abs(e.deltaY) : e.deltaY;
+      if (delta > 0) {
+        wheelAccumulatedY += delta * 0.75;
       }
-      clearTimeout(wheelTimer);
-      wheelTimer = setTimeout(() => { wheelSum = 0; }, 300);
-    } else if (atTop && e.deltaY < -25) {
-      wheelSum += Math.abs(e.deltaY);
-      if (wheelSum > 60) {
-        wheelSum = 0;
-        animateAndClose(overlayEl, sheet);
+
+      if (wheelAccumulatedY > 8) {
+        if (e.cancelable) e.preventDefault();
+        sheet.classList.add('dragging');
+        sheet.style.transition = 'none';
+        sheet.style.transform = `translateY(${wheelAccumulatedY}px)`;
+
+        const progress = Math.min(1, wheelAccumulatedY / (sheet.offsetHeight || 420));
+        overlayEl.style.backgroundColor = `rgba(23, 20, 15, ${Math.max(0.04, 0.55 * (1 - progress * 0.85))})`;
+
+        const halfThreshold = Math.min((sheet.offsetHeight || 400) * 0.35, 120);
+
+        // Reached half down -> slide all the way down and close!
+        if (wheelAccumulatedY >= halfThreshold) {
+          wheelAccumulatedY = 0;
+          clearTimeout(wheelTimer);
+          animateAndClose(overlayEl, sheet);
+          return;
+        }
+
+        // If stopped before half down, spring back smoothly
+        clearTimeout(wheelTimer);
+        wheelTimer = setTimeout(() => {
+          if (overlayEl.dataset.closing !== 'true') {
+            wheelAccumulatedY = 0;
+            sheet.classList.remove('dragging');
+            sheet.style.transition = 'transform 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.25)';
+            sheet.style.transform = '';
+            overlayEl.style.transition = 'background-color 0.28s ease';
+            overlayEl.style.backgroundColor = '';
+            setTimeout(() => {
+              sheet.style.transition = '';
+              overlayEl.style.transition = '';
+            }, 340);
+          }
+        }, 220);
       }
-      clearTimeout(wheelTimer);
-      wheelTimer = setTimeout(() => { wheelSum = 0; }, 300);
     }
-  }, { passive: true });
+  }, { passive: false });
 }
 
 document.querySelectorAll('.overlay').forEach(o => {
